@@ -1,0 +1,84 @@
+﻿@page
+@model OppeniddictServer.Pages.ConsentModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Consent";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f6f8;
+            margin: 0;
+        }
+        .consent-container {
+            width: 400px;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .info {
+            text-align: center;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+        .btn {
+            padding: 0.6rem 1rem;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            margin: 0 0.5rem;
+        }
+        .btn-approve {
+            background-color: #28a745;
+        }
+        .btn-approve:hover {
+            background-color: #218838;
+        }
+        .btn-decline {
+            background-color: #dc3545;
+        }
+        .btn-decline:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="consent-container">
+        <h2>Grant Consent</h2>
+        <div class="info">
+            <p>The application is requesting access. By granting consent, you allow the application to access your information.</p>
+           @*  <p>Redirect URL: <strong>@Model.ReturnUrl</strong></p> *@
+        </div>
+
+        <form method="post">
+            <div class="btn-group">
+                <button type="submit" name="Grant" value="@Constants.Constants.GrantAccessValue" class="btn btn-approve">Grant Access</button>
+                <button type="submit" name="Deny" value="@Constants.Constants.DenyAccessValue" class="btn btn-decline">Deny Access</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+﻿@page
+@model OppeniddictServer.Pages.AuthenticateModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f5;
+            margin: 0;
+        }
+        .login-container {
+            width: 300px;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 0.7rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 1rem;
+            text-align: center;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+
+        <form method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" value="@Model.Email" placeholder="Enter your email" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" value="@Model.Password" placeholder="Enter your password" required />
+            </div>
+            <button type="submit" class="btn-submit">Login</button>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.AuthStatus))
+        {
+            <div class="message">AuthStatus: @Model.AuthStatus</div>
+        }
+       @*  @if (!string.IsNullOrEmpty(Model.ReturnUrl))
+        {
+            <div class="message">Return URL: @Model.ReturnUrl</div>
+        } *@
+    </div>
+</body>
+</html>
