@@ -27,7 +27,7 @@ namespace OppeniddictServer.Pages
         {
             if (grant != Constants.Constants.GrantAccessValue)
             {
-                Redirect("/Error");
+               return Redirect("/Error");
             }
 
             var consentclaim=User.GetClaim(Constants.Constants.ConsentNaming);

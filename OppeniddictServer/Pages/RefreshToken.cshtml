@@ -1,0 +1,42 @@
+﻿@page
+@model OppeniddictServer.Pages.RefreshTokenModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Redirecting";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="3;url=@Model.State" />
+
+    <title>@ViewData["Title"]</title>
+    <style>
+
+        .login-container {
+            width: 300px;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+    </style>
+</head>
+<body>
+    <div>
+        <form method="post">
+            <div>
+                <h2>"Redirecting... Refreshing Token"</h2>
+            </div>
+        </form>
+
+    </div>
+</body>
+</html>

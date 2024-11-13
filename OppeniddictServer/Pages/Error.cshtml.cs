@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
@@ -21,6 +22,7 @@ namespace OppeniddictServer.Pages
 
         public void OnGet()
         {
+            var from = HttpContext;
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
         }
     }

@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OppeniddictServer", "Oppeni
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIddictResourceServer", "OpenIddictResourceServer\OpenIddictResourceServer.csproj", "{6A8E5F21-54B6-482D-BAD3-9204E2645545}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skoruba.IdentityServer4.STS.Identity", "..\IdentityServer4.Admin\src\Skoruba.IdentityServer4.STS.Identity\Skoruba.IdentityServer4.STS.Identity.csproj", "{F7B04987-CCB1-4695-A350-EF7D7C6568CD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{6A8E5F21-54B6-482D-BAD3-9204E2645545}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A8E5F21-54B6-482D-BAD3-9204E2645545}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A8E5F21-54B6-482D-BAD3-9204E2645545}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7B04987-CCB1-4695-A350-EF7D7C6568CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7B04987-CCB1-4695-A350-EF7D7C6568CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7B04987-CCB1-4695-A350-EF7D7C6568CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7B04987-CCB1-4695-A350-EF7D7C6568CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

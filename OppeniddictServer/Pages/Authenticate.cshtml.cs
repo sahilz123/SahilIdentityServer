@@ -42,7 +42,7 @@ namespace OppeniddictServer.Pages
 
         public async Task<IActionResult> OnPostAsync(string email, string password)
         {
-            if(email.IsNullOrEmpty()|| password.IsNullOrEmpty()) throw new NoNullAllowedException();
+            //if(email.IsNullOrEmpty()|| password.IsNullOrEmpty()) throw new NoNullAllowedException();
 
             ClientData clientlist = await _clientService.GetClientList(email, password); //("No User Found -- Authorization Failed");
             if(clientlist==null)
@@ -50,7 +50,6 @@ namespace OppeniddictServer.Pages
                 AuthStatus = "Cannot authenticate - No user found with above Credentials";
                 return Page();
             }
-               // return Redirect("/access-denied");
             //if client not authorize then redirect this page to signup that will add the client into database           
 
             var claims = new List<Claim>
