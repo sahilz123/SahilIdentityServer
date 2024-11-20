@@ -1,4 +1,6 @@
 ﻿using OpenIddict.Abstractions;
+using OppeniddictServer.Model;
+using System.Collections.Generic;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace OppeniddictServer.ClientManager
@@ -33,7 +35,7 @@ namespace OppeniddictServer.ClientManager
             });
         }
 
-        public async Task AddClients()
+        public async Task<string> AddClients(SignUp newClient)
         {
             await using var scope = _serviceProvider.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -41,36 +43,34 @@ namespace OppeniddictServer.ClientManager
             await context.Database.EnsureCreatedAsync();
 
             var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
-            var client = await manager.FindByClientIdAsync("web-client");
+            //var client = await manager.FindByClientIdAsync("web-client");
+            var client = await manager.FindByClientIdAsync(newClient.ClientId.ToString()!);
 
             if (client != null)
             {
-                await manager.DeleteAsync(client);
+                return "Client Already Exist";
+                //await manager.DeleteAsync(client);
             }
-            await manager.CreateAsync(new OpenIddictApplicationDescriptor
+            else
             {
-                ClientId = "web-client",
-                
-                ClientSecret = "901564A5-E7FE-42CB-B10D-61EF6A8F3654",
-                ConsentType = ConsentTypes.Explicit,
-                DisplayName = "WEB application",               
-                RedirectUris =
-                {
-                       // new Uri("https://localhost:44310/Account/Register"),
-                    new Uri("https://localhost:7002/swagger/oauth2-redirect.html"),
 
-                    new Uri("https://localhost:7205"),
-                    new Uri("https://localhost:7205/swagger/oauth2-redirect.html"),
-                    new Uri("http://localhost:3000/login"),
-                    new Uri("http://localhost:3000/Dashboard")
-                },
-                PostLogoutRedirectUris =
+                //string[] uriStrings = newClient.RedirectUris!.Split(',');
+                //HashSet<Uri> r = new HashSet<Uri>();
+
+
+                
+                await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
-                    new Uri("https://localhost:7002/resources"),
-                    new Uri("https://localhost:7205/resources"),
-                    new Uri("https://localhost:3000/resources")
-                },
-                Permissions =
+
+                    ClientSecret = Guid.NewGuid().ToString(),
+                    ClientId = newClient.ClientId.ToString(),
+                    ConsentType = ConsentTypes.Explicit,
+                    DisplayName = newClient.DisplayName,
+                    RedirectUris = 
+                    {
+                       new Uri(newClient.RedirectUris!.Trim())
+                    },
+                 Permissions =
                 {
                     Permissions.Endpoints.Authorization,
                     Permissions.Endpoints.Logout,
@@ -89,11 +89,14 @@ namespace OppeniddictServer.ClientManager
                     Scopes.OpenId,
                     $"{Permissions.Prefixes.Scope}api1"
                 },
-                //Requirements =
-                //{
-                //    Requirements.Features.ProofKeyForCodeExchange
-                //}
-            });
+                    //Requirements =
+                    //{
+                    //    Requirements.Features.ProofKeyForCodeExchange
+                    //}
+                });
+
+                return $"Client Created {newClient.ClientId}";
+            }
         }
     }
 }

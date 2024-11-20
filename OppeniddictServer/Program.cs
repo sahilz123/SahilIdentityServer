@@ -38,7 +38,7 @@ builder.Services.AddOpenIddict()
 
         options.AllowAuthorizationCodeFlow()
                .AllowRefreshTokenFlow()
-               .SetAccessTokenLifetime(TimeSpan.FromMinutes(1))
+               .SetAccessTokenLifetime(TimeSpan.FromMinutes(5))
                .SetRefreshTokenLifetime(TimeSpan.FromMinutes(30));
 
         options.AddEncryptionKey(new SymmetricSecurityKey(
@@ -80,12 +80,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var seeder = scope.ServiceProvider.GetRequiredService<ClientSeeder>();
-    seeder.AddClients().GetAwaiter().GetResult();
-    seeder.AddScopes().GetAwaiter().GetResult();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var seeder = scope.ServiceProvider.GetRequiredService<ClientSeeder>();
+//    seeder.AddClients().GetAwaiter().GetResult();
+//    seeder.AddScopes().GetAwaiter().GetResult();
+//}
 
 if (!app.Environment.IsDevelopment())
 {
