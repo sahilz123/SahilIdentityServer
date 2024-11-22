@@ -194,16 +194,16 @@ namespace OppeniddictServer.Controller
         public async Task<IActionResult> LogoutPost()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            
+
             return SignOut(
                 authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
                 properties: new AuthenticationProperties
                 {
-                    RedirectUri = "/"
+                    RedirectUri = "http://localhost:3000/home"
                 });
         }
 
-    
+
     }
 
 }

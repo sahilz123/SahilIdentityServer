@@ -12,15 +12,17 @@ using OppeniddictServer.ClientManager;
 using System.Web;
 using System;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
+using OppeniddictServer.Identity;
 
 namespace OppeniddictServer.Pages
 {
     public class AuthenticateModel : PageModel
     {
-        private readonly IClientService _clientService;
-        public AuthenticateModel(IClientService clientService)
+        private readonly UserManager<UserIdentity> _userManager;
+        public AuthenticateModel(UserManager<UserIdentity> userManager)
         {
-            _clientService = clientService;
+            _userManager = userManager;
         }
         public string Email { get; set; } 
         public string Password { get; set; }
@@ -42,21 +44,20 @@ namespace OppeniddictServer.Pages
 
         public async Task<IActionResult> OnPostAsync(string email, string password)
         {
-            //if(email.IsNullOrEmpty()|| password.IsNullOrEmpty()) throw new NoNullAllowedException();
 
-            ClientData clientlist = await _clientService.GetClientList(email, password); //("No User Found -- Authorization Failed");
-            if(clientlist==null)
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user==null)
             {
                 AuthStatus = "Cannot authenticate - No user found with above Credentials";
                 return Page();
             }
-            //if client not authorize then redirect this page to signup that will add the client into database           
+            //if client not authorize then redirect this page to RegisterInput that will add the client into database           
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email,email),
-                new Claim(ClaimTypes.Role,clientlist.ClientRole.ToString()),
-                new Claim(ClaimTypes.SerialNumber,clientlist.Client_Id!)
+                new Claim(ClaimTypes.Name,user.NormalizedUserName),
+                new Claim(ClaimTypes.SerialNumber,user.Id!)
             };
 
             var principal = new ClaimsPrincipal(

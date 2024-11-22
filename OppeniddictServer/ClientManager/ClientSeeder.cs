@@ -1,4 +1,5 @@
 ﻿using OpenIddict.Abstractions;
+using OppeniddictServer.Context;
 using OppeniddictServer.Model;
 using System.Collections.Generic;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -35,7 +36,7 @@ namespace OppeniddictServer.ClientManager
             });
         }
 
-        public async Task<string> AddClients(SignUp newClient)
+        public async Task<string> AddClients(RegisterInput newClient)
         {
             await using var scope = _serviceProvider.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OppeniddictServer.Context;
 using OppeniddictServer.Interface;
 
 namespace OppeniddictServer.ClientManager
