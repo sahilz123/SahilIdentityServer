@@ -13,17 +13,17 @@ namespace OppeniddictServer.Identity
     {
         public static async Task Initialize(IServiceProvider serviceProvider, RoleManager<UserIdentityRole> roleManager)
         {
-            string[] roleNames = { "Admin", "User", "Manager" };
+            //string[] roleNames = { "Admin", "User", "Manager" };
 
-            foreach (var roleName in roleNames)
-            {
-                var roleExist = await roleManager.RoleExistsAsync(roleName);
-                if (!roleExist)
-                {
-                    var role = new UserIdentityRole { Name = roleName };
-                    await roleManager.CreateAsync(role);
-                }
-            }
+            //foreach (var roleName in roleNames)
+            //{
+            //    var roleExist = await roleManager.RoleExistsAsync(roleName);
+            //    if (!roleExist)
+            //    {
+            //        var role = new UserIdentityRole { Name = roleName };
+            //        await roleManager.CreateAsync(role);
+            //    }
+            //}
         }
     }
 

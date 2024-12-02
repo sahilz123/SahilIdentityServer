@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,6 +15,7 @@ namespace OppeniddictServer.Pages
         private readonly UserManager<UserIdentity> _userManager;
         private readonly SignInManager<UserIdentity> _signInManager;
         private readonly RoleManager<UserIdentityRole> _roleManager;
+
 
         [BindProperty]
         public RegisterViewModel RegisterInput { get; set; } = new RegisterViewModel();
@@ -36,8 +40,10 @@ namespace OppeniddictServer.Pages
                             .ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync()//string client_id, string appScopes, string redirectUri)
         {
+            var parameters = HttpContext.Request.QueryString;
+
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -82,7 +88,14 @@ namespace OppeniddictServer.Pages
                 // Sign in the user after successful registration
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 ResponseMessage = "Registration successful!";
-                return Redirect("http://localhost:3000/home"); // Redirect to a success page or desired endpoint
+
+                //return Challenge(
+                //   authenticationSchemes: CookieAuthenticationDefaults.AuthenticationScheme,
+                //  properties: new AuthenticationProperties
+                //  {
+                //      RedirectUri = "/Authenticate"+parameters
+                //  });
+                return Redirect("/Authenticate" + parameters); // Redirect to a success page or desired endpoint
             }
 
             // Handle errors from user creation
@@ -102,6 +115,6 @@ namespace OppeniddictServer.Pages
         public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public List<string> Roles { get; set; } = new List<string>() { "User"};
+        public List<string> Roles { get; set; } = new List<string>();
     }
 }

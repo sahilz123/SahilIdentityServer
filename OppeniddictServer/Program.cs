@@ -21,37 +21,42 @@ builder.Services.AddDbContext<AdminIdentityDbContext>(options =>
 {
     
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    options.UseOpenIddict();
 });
 
-builder.Services.AddIdentity<UserIdentity, UserIdentityRole>(options=>
+builder.Services.AddDbContext<OpenIddictDbContext>(options =>
+{
+    options.UseOpenIddict();
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddIdentity<UserIdentity, UserIdentityRole>(options =>
 {
     // Password settings
-    options.Password.RequireDigit = true; 
-    options.Password.RequiredLength = 8; 
-    options.Password.RequireNonAlphanumeric = true; 
-    options.Password.RequireUppercase = true; 
-    options.Password.RequireLowercase = true; 
-    options.Password.RequiredUniqueChars = 3; 
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequiredUniqueChars = 3;
 
     // User settings
     options.User.AllowedUserNameCharacters =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    options.User.RequireUniqueEmail = true; 
-   
+    options.User.RequireUniqueEmail = true;
+
 }
 
     )
        .AddEntityFrameworkStores<AdminIdentityDbContext>()
-       .AddDefaultTokenProviders();
+       .AddDefaultTokenProviders()
+       .AddSignInManager();
 
 // Configure OpenIddict
 builder.Services.AddOpenIddict()
     .AddCore(options =>
     {
         options.UseEntityFrameworkCore()
-               //.UseDbContext<AppDbContext>();
-               .UseDbContext<AdminIdentityDbContext>();
+               .UseDbContext<OpenIddictDbContext>();
 
     })
     .AddServer(options =>
@@ -77,6 +82,7 @@ builder.Services.AddOpenIddict()
                .EnableLogoutEndpointPassthrough()
                .EnableAuthorizationEndpointPassthrough()               
                .EnableTokenEndpointPassthrough();
+
         options.DisableAccessTokenEncryption();
     })
     .AddValidation(options =>
@@ -91,6 +97,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                 {
                     c.LoginPath = "/Authenticate";
                 });
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = ".AspNetCore.Identity.Application";
+    options.LoginPath = "/Authenticate"; // Redirect path for login
+    options.SlidingExpiration = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.AccessDeniedPath = "/Error"; 
+});
 
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddTransient<ClientSeeder>();
@@ -120,7 +135,7 @@ using (var scope = app.Services.CreateScope())
     var roleManager = services.GetRequiredService<RoleManager<UserIdentityRole>>();
 
     // Seed the roles if they do not exist
-    await SeedRoles.Initialize(services, roleManager);
+    //await SeedRoles.Initialize(services, roleManager);
 }
 
 if (!app.Environment.IsDevelopment())

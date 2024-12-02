@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Web;
 using System.Collections.Immutable;
 using OppeniddictServer.Constants;
+using Microsoft.AspNetCore.Identity;
 namespace OppeniddictServer.Controller
 {
     [ApiController]
@@ -56,13 +57,16 @@ namespace OppeniddictServer.Controller
         [HttpPost("~/connect/authorize")]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Authorize()
+        
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
 
-            var result=await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //var result=await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            var result = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
 
             var isAuthenticated=_authService.IsAuthenticated(result, request);
+
 
             var parameters = _authService.ParseOAuthParameters(HttpContext);
             if (!isAuthenticated)
@@ -91,7 +95,7 @@ namespace OppeniddictServer.Controller
 
 
             var email = result.Principal.FindFirst(ClaimTypes.Email)!.Value;                     //check for roles from db and adjust claims
-           // var id = result.Principal.FindFirst(ClaimTypes.SerialNumber)!.Value;               //check for id from db and adjust claims
+            //var id = result.Principal.FindFirst(ClaimTypes.SerialNumber)!.Value;               //check for id from db and adjust claims
            // var cookiepath = result.Principal.FindFirst(ClaimTypes.CookiePath)!.Value;         //check for path from db and adjust claims
             var role = result.Principal.FindFirst(ClaimTypes.Role)!.Value;                       //check for roles from db and adjust claims
             var subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;                   //check for subject from db and adjust claims

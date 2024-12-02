@@ -1,42 +1,52 @@
-﻿using OpenIddict.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.DependencyInjection;
+using OpenIddict.Abstractions;
 using OppeniddictServer.Context;
 using OppeniddictServer.Model;
-using System.Collections.Generic;
+using OppeniddictServer.Openiddict;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
-namespace OppeniddictServer.ClientManager
+namespace OppeniddictServer.Pages.Application
 {
-    public class ClientSeeder
+    public class CreateModel : PageModel
     {
-        private readonly IServiceProvider _serviceProvider;
-        public ClientSeeder(IServiceProvider serviceProvider)
+        private readonly OpenIddictDbContext _context;
+
+        public CreateModel(OpenIddictDbContext context)
         {
-            _serviceProvider = serviceProvider;
+            _context = context;
         }
 
-        public async Task AddScopes()
+        public IActionResult OnGet()
         {
-            await using var scope = _serviceProvider.CreateAsyncScope();
-            var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
+            return Page();
+        }
 
-            var apiscope = await manager.FindByNameAsync("api1");
+        [BindProperty]
+        public ApplicationManager ApplicationManager { get; set; } = default!;
+        
 
-            if (apiscope != null)
+        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+        public async Task<IActionResult> OnPostAsync()
+        {
+          if (!ModelState.IsValid || _context.ApplicationManager == null || ApplicationManager == null)
             {
-                await manager.DeleteAsync(apiscope);
+                return Page();
             }
 
-            await manager.CreateAsync(new OpenIddictScopeDescriptor
-            {
-                DisplayName = "API Scope",                      //can be saved in database for client
-                Name = "api1",
-                Resources ={
-                    "resource_server_1"
-                    }
-            });
+            _context.ApplicationManager.Add(ApplicationManager);
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("./Index");
         }
 
-        public async Task<string> AddClients(RegisterInput newClient)
+/*        public async Task<string> AddClients(RegisterInput newClient)
         {
             await using var scope = _serviceProvider.CreateAsyncScope();
             //var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -53,7 +63,7 @@ namespace OppeniddictServer.ClientManager
                 //await manager.DeleteAsync(client);
             }
             else
-            {                
+            {
                 await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
 
@@ -61,11 +71,11 @@ namespace OppeniddictServer.ClientManager
                     ClientId = newClient.ClientId.ToString(),
                     ConsentType = ConsentTypes.Explicit,
                     DisplayName = newClient.DisplayName,
-                    RedirectUris = 
+                    RedirectUris =
                     {
                        new Uri(newClient.RedirectUris!.Trim())
                     },
-                 Permissions =
+                    Permissions =
                     {
                         Permissions.Endpoints.Authorization,
                         Permissions.Endpoints.Logout,
@@ -93,5 +103,6 @@ namespace OppeniddictServer.ClientManager
                 return $"Client Created {newClient.ClientId}";
             }
         }
+*/
     }
 }

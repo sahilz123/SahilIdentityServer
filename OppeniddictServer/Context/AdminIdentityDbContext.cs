@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Constants;
 using OppeniddictServer.Identity;
 using OppeniddictServers.Identity;
+using OppeniddictServer.Openiddict;
+using OpenIddict.Core;
+using OpenIddict.EntityFrameworkCore.Models;
 
 namespace OppeniddictServer.Context
 {
@@ -16,7 +19,11 @@ namespace OppeniddictServer.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
+            //builder.Ignore<OpenIddictEntityFrameworkCoreApplication>();
+            //builder.Entity<ApplicationManager>(entity =>
+            //{
+            //    entity.ToTable("OpenIddictApplications"); 
+            //});
             ConfigureIdentityContext(builder);
         }
 
@@ -31,5 +38,6 @@ namespace OppeniddictServer.Context
             builder.Entity<UserIdentityUserClaim>().ToTable(TableConsts.IdentityUserClaims);
             builder.Entity<UserIdentityUserToken>().ToTable(TableConsts.IdentityUserTokens);
         }
+
     }
 }

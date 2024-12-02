@@ -80,16 +80,17 @@
                 <input type="password" id="password" name="password" value="@Model.Password" placeholder="Enter your password" required />
             </div>
             <button type="submit" class="btn-submit">Login</button>
+
         </form>
+        <div class="register-link">
+            <p>Don't have an account? <a href="/Register">Register here</a></p>
+        </div>
 
         @if (!string.IsNullOrEmpty(Model.AuthStatus))
         {
             <div class="message">AuthStatus: @Model.AuthStatus</div>
         }
-       @*  @if (!string.IsNullOrEmpty(Model.ReturnUrl))
-        {
-            <div class="message">Return URL: @Model.ReturnUrl</div>
-        } *@
+
     </div>
 </body>
 </html>

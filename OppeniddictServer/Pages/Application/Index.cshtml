@@ -1,0 +1,123 @@
+﻿@page
+@model OppeniddictServer.Pages.Application.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Applications Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].ApplicationType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].ClientId)
+            </th>
+            <th class="text-truncate" style="max-width: 75px;">
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].ClientSecret)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].ClientType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].ConcurrencyToken)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].ConsentType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].DisplayName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].DisplayNames)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].JsonWebKeySet)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].Permissions)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].PostLogoutRedirectUris)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].Properties)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].RedirectUris)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].Requirements)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationManager[0].Settings)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.ApplicationManager) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApplicationType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientSecret)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConcurrencyToken)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConsentType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisplayName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisplayNames)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.JsonWebKeySet)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Permissions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostLogoutRedirectUris)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Properties)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RedirectUris)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Requirements)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Settings)
+            </td>
+                <td>
+                    <div class="d-flex flex-column">
+                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm mb-1">Edit</a>
+                        <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm mb-1">Details</a>
+                        <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                </td>
+
+        </tr>
+}
+    </tbody>
+</table>

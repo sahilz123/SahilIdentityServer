@@ -1,0 +1,49 @@
+﻿@page
+@model OppeniddictServer.Pages.Role.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>User Role</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+           @*  <div class="form-group">
+                <label asp-for="UserIdentityRole.Id" class="control-label"></label>
+                <input asp-for="UserIdentityRole.Id" class="form-control" />
+                <span asp-validation-for="UserIdentityRole.Id" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="UserIdentityRole.Name" class="control-label"></label>
+                <input asp-for="UserIdentityRole.Name" class="form-control" />
+                <span asp-validation-for="UserIdentityRole.Name" class="text-danger"></span>
+            </div>
+             @* <div class="form-group">
+                 <label asp-for="UserIdentityRole.NormalizedName" class="control-label"></label>
+                 <input asp-for="UserIdentityRole.NormalizedName" class="form-control" />
+                 <span asp-validation-for="UserIdentityRole.NormalizedName" class="text-danger"></span>
+             </div> *@
+            @* <div class="form-group">
+                <label asp-for="UserIdentityRole.ConcurrencyStamp" class="control-label"></label>
+                <input asp-for="UserIdentityRole.ConcurrencyStamp" class="form-control" />
+                <span asp-validation-for="UserIdentityRole.ConcurrencyStamp" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

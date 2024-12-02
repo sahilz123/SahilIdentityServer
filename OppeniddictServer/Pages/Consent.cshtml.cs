@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OpenIddict.Abstractions;
@@ -36,6 +37,8 @@ namespace OppeniddictServer.Pages
             {
                 User.SetClaim(Constants.Constants.ConsentNaming, grant);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, User);
+                await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, User);
+                
             }            
 
             return Redirect(ReturnUrl!);

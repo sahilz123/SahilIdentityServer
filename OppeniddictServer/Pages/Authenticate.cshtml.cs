@@ -1,51 +1,64 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using OppeniddictServer.Interface;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using OppeniddictServer.ClientManager;
-using System.Web;
-using System;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using OppeniddictServer.Identity;
+using OpenIddict.Abstractions;
+using System.Reflection;
+using System.Text.Json;
+using System.Collections.Immutable;
 
 namespace OppeniddictServer.Pages
 {
     public class AuthenticateModel : PageModel
     {
         private readonly UserManager<UserIdentity> _userManager;
-        public AuthenticateModel(UserManager<UserIdentity> userManager)
+        private readonly IServiceProvider _serviceProvider;
+        
+        public ClientDetails clientDetails { get; set; } = new ClientDetails();
+
+        private readonly IOpenIddictApplicationManager _manager;
+        private readonly IOpenIddictScopeManager _scopeManager;
+//        private readonly RoleManager<UserIdentityRole> _roleManager;
+
+        public AuthenticateModel(UserManager<UserIdentity> userManager, 
+                                IServiceProvider serviceProvider,
+                                IOpenIddictApplicationManager manager, 
+                                IOpenIddictScopeManager scopeManager)
         {
             _userManager = userManager;
+            _serviceProvider = serviceProvider;
+            _manager = manager;
+            _scopeManager = scopeManager;
+           // _roleManager = roleManager;
         }
-        public string Email { get; set; } 
-        public string Password { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
         [BindProperty]
-        public string ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }        
         public string AuthStatus { get; set; } = "UnAuthorized";
 
-        public IActionResult OnGet(string returnUrl)
+        public IActionResult OnGet()
         {
-            ReturnUrl = returnUrl;
-
-            var parameter = HttpUtility.ParseQueryString(returnUrl);
-            Email = parameter.Get("email")!;
-            Password = parameter.Get("password")!;
-
-
+      
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string email, string password)
+        public async Task<IActionResult> OnPostAsync(string email, string password, string client_id, string appScopes,string redirectUri)
         {
 
-            var user = await _userManager.FindByEmailAsync(email);
+            var clientExist= await ClientDetailsExist(client_id, appScopes, redirectUri);
+            if(!clientExist)
+            {
+                AuthStatus = "Parameter Mismatched or Invalid";
+            }
+           
+            var user = await _userManager.FindByNameAsync(email)
+            ?? await _userManager.FindByEmailAsync(email);
+
+
             if (user==null)
             {
                 AuthStatus = "Cannot authenticate - No user found with above Credentials";
@@ -53,20 +66,27 @@ namespace OppeniddictServer.Pages
             }
             //if client not authorize then redirect this page to RegisterInput that will add the client into database           
 
+            var roles = await _userManager.GetRolesAsync(user);
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email,email),
-                new Claim(ClaimTypes.Name,user.NormalizedUserName),
-                new Claim(ClaimTypes.SerialNumber,user.Id!)
+                new (ClaimTypes.Email,email),
+                new (ClaimTypes.Name,user.NormalizedUserName),
+                new (ClaimTypes.SerialNumber,user.Id!),
             };
+                foreach (var role in roles) 
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
 
+                }
             var principal = new ClaimsPrincipal(
                 new List<ClaimsIdentity>
             {
                     new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme)
             });
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            
+            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+            
             if (!string.IsNullOrEmpty(ReturnUrl))
             {
                 return Redirect(ReturnUrl);
@@ -75,5 +95,63 @@ namespace OppeniddictServer.Pages
             return Page();
         }
 
+        private async Task<bool> ClientDetailsExist(string client_id, string appScopes,string providedredirectUri)
+        {
+            if (client_id == null)
+                return false;
+            var client = await _manager.FindByClientIdAsync(client_id);               //fetch database for the client details , no seediing now
+            
+            //var apiscope = await _scopeManager.FindByNameAsync(appScopes);
+
+            Type myType = client!.GetType()!;
+            IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
+            foreach (PropertyInfo prop in props)
+            {
+                object propValue = prop!.GetValue(client, null)!;
+
+                if (prop.Name == "ClientId")
+                {
+                    clientDetails.clientId = propValue!.ToString()!;
+                }
+                if (prop.Name == "RedirectUris")
+                {
+                    clientDetails.redirect_Uri = propValue!.ToString()!;
+                }
+
+                if (prop.Name == "State")
+                {
+                    clientDetails.state = propValue!.ToString()!;
+                }
+            }
+
+            clientDetails.scopes= appScopes;
+            clientDetails.ProvidedRedirectUri = providedredirectUri;
+            ReturnUrl = clientDetails.returnUrl;
+            
+            if (clientDetails.SelectedRedirectUri == null || clientDetails.scopes == null || clientDetails.clientId == null)
+                return false;
+
+            return true;
+
+        }
     }
+
+}
+public class ClientDetails
+{
+    public string? clientId { get; set; }
+    public string? redirect_Uri { get; set; }     //json form from the server databse
+    public string? scopes { get; set; }
+    public string? state { get; set; }
+    public string? ProvidedRedirectUri { get; set; }
+
+    public List<string>? ParsedRedirectUris =>
+        !string.IsNullOrEmpty(redirect_Uri)
+            ? JsonSerializer.Deserialize<List<string>>(redirect_Uri)
+            : new List<string>();
+
+    public string? SelectedRedirectUri =>
+            ParsedRedirectUris?.FirstOrDefault(uri => uri.Equals(ProvidedRedirectUri, StringComparison.OrdinalIgnoreCase));
+
+    public string returnUrl => $"/connect/authorize?response_type=code&client_id={clientId}&redirect_uri={SelectedRedirectUri}&scope={scopes}&state={state}";
 }
