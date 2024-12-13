@@ -38,6 +38,7 @@ namespace OppeniddictServer.Pages
             if (ModelState.IsValid)
             {
                 ResponseMessage = _seeder.AddClients(RegisterInput).GetAwaiter().GetResult();
+                var ResponseMessage1 = _seeder.CheckClient(RegisterInput.ClientId);
                 return Page();
                 //_seeder.AddScopes().GetAwaiter().GetResult();
             }

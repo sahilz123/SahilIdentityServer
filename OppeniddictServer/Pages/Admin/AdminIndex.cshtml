@@ -1,0 +1,27 @@
+﻿@page
+@model AdminIndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1>Admin Dashboard</h1>
+
+<div>
+    <h2>Manage Clients</h2>
+     <partial name="_AddClientPartial" model="Model" />
+</div>
+
+<div>
+    <h2>Manage Roles</h2>
+    <partial name="_AddRolePartial" />
+</div>
+
+<div>
+    <h2>Manage Scopes</h2>
+    <partial name="_AddScopePartial" />
+</div>
+
+<div>
+    <h2>Assign User to Role</h2>
+    <partial name="_AssignUserRolePartial" />
+</div>

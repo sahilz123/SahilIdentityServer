@@ -7,7 +7,6 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 using OppeniddictServer.Context;
 using Microsoft.AspNetCore.Identity;
 using OppeniddictServer.Identity;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +49,8 @@ builder.Services.AddIdentity<UserIdentity, UserIdentityRole>(options =>
        .AddEntityFrameworkStores<AdminIdentityDbContext>()
        .AddDefaultTokenProviders()
        .AddSignInManager();
+
+//builder.Services.AddDefaultIdentity<UserIdentity>(o=>o);
 
 // Configure OpenIddict
 builder.Services.AddOpenIddict()
@@ -95,22 +96,20 @@ builder.Services.AddOpenIddict()
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(c =>
                 {
-                    c.LoginPath = "/Authenticate";
+                    c.LoginPath = "/ServerLogin";
                 });
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.Name = ".AspNetCore.Identity.Application";
-    options.LoginPath = "/Authenticate"; // Redirect path for login
+    options.LoginPath = "/ServerLogin"; // Redirect path for login
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.AccessDeniedPath = "/Error"; 
 });
 
 builder.Services.AddTransient<AuthService>();
-builder.Services.AddTransient<ClientSeeder>();
-//builder.Services.AddScoped<IClientService, ClientService>();
-
+builder.Services.AddScoped<ClientSeeder>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -120,22 +119,21 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-var app = builder.Build();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy =>
+        policy.RequireRole("SuperAdmin"));
+});
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var seeder = scope.ServiceProvider.GetRequiredService<ClientSeeder>();
-//    seeder.AddClients().GetAwaiter().GetResult();
-//    seeder.AddScopes().GetAwaiter().GetResult();
-//}
+
+
+var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var roleManager = services.GetRequiredService<RoleManager<UserIdentityRole>>();
-
-    // Seed the roles if they do not exist
-    //await SeedRoles.Initialize(services, roleManager);
+    var seeder = scope.ServiceProvider.GetRequiredService<ClientSeeder>();
+    //seeder.AddClients().GetAwaiter().GetResult();
+    //seeder.AddScopes().GetAwaiter().GetResult();
 }
 
 if (!app.Environment.IsDevelopment())

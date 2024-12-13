@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.EntityFrameworkCore.Models;
 using OppeniddictServer.Context;
 using OppeniddictServer.Openiddict;
 
@@ -20,7 +21,7 @@ namespace OppeniddictServer.Pages.Application
         }
 
         [BindProperty]
-      public ApplicationManager ApplicationManager { get; set; } = default!;
+      public OpenIddictEntityFrameworkCoreApplication ApplicationManager { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(string id)
         {

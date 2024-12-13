@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.EntityFrameworkCore.Models;
 using OppeniddictServer.Context;
 using OppeniddictServer.Openiddict;
 
 namespace OppeniddictServer.Pages.Application
 {
+    [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
         private readonly OppeniddictServer.Context.OpenIddictDbContext _context;
@@ -21,7 +24,7 @@ namespace OppeniddictServer.Pages.Application
         }
 
         [BindProperty]
-        public ApplicationManager ApplicationManager { get; set; } = default!;
+        public OpenIddictEntityFrameworkCoreApplication ApplicationManager { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(string id)
         {

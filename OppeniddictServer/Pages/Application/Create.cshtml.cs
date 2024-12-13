@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
 using OpenIddict.Abstractions;
+using OppeniddictServer.ClientManager;
 using OppeniddictServer.Context;
 using OppeniddictServer.Model;
 using OppeniddictServer.Openiddict;
@@ -14,13 +16,16 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace OppeniddictServer.Pages.Application
 {
+    [Authorize(Roles ="Admin")]
     public class CreateModel : PageModel
     {
         private readonly OpenIddictDbContext _context;
+        private readonly ClientSeeder _seeder;
 
-        public CreateModel(OpenIddictDbContext context)
+        public CreateModel(OpenIddictDbContext context,ClientSeeder seeder)
         {
             _context = context;
+            _seeder = seeder;
         }
 
         public IActionResult OnGet()
@@ -40,8 +45,17 @@ namespace OppeniddictServer.Pages.Application
                 return Page();
             }
 
-            _context.ApplicationManager.Add(ApplicationManager);
-            await _context.SaveChangesAsync();
+            //_context.ApplicationManager.Add(ApplicationManager);
+            //await _context.SaveChangesAsync();
+            var registerInput = new RegisterInput()
+            {
+                ClientId = ApplicationManager.ClientId,
+                DisplayName=ApplicationManager.DisplayName,
+                RedirectUris=ApplicationManager.RedirectUris,
+                Permissions=ApplicationManager.Permissions
+
+            };
+            var seedclient=_seeder.AddClients(registerInput).GetAwaiter().GetResult();
 
             return RedirectToPage("./Index");
         }

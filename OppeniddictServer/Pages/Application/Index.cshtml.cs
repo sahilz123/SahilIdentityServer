@@ -2,9 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Openiddict;
 using OppeniddictServer.Context;
+using Microsoft.AspNetCore.Mvc;
+using OpenIddict.EntityFrameworkCore.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OppeniddictServer.Pages.Application
 {
+    [Authorize(Roles = "User")]
     public class IndexModel : PageModel
     {
         private readonly OpenIddictDbContext _context;
@@ -13,11 +17,11 @@ namespace OppeniddictServer.Pages.Application
         {
             _context = context;
         }
-
-        public IList<ApplicationManager> ApplicationManager { get;set; } = default!;
+        public IList<OpenIddictEntityFrameworkCoreApplication> ApplicationManager { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
+
             
             if (_context.ApplicationManager != null)
             {

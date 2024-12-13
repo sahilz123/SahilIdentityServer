@@ -13,10 +13,11 @@ namespace OppeniddictServer.Context
         { }
 
         // public DbSet<ClientData> ClientDbSet { get; set; }
-        public DbSet<ApplicationManager>? ApplicationManager { get; set; }
-        //public DbSet<OpenIddictEntityFrameworkCoreApplication>? Applications { get; set; }
+        //public DbSet<ApplicationManager>? ApplicationManager { get; set; }
+        public DbSet<OpenIddictEntityFrameworkCoreApplication>? ApplicationManager { get; set; }
         public DbSet<OpenIddictEntityFrameworkCoreAuthorization>? Authorizations { get; set; }
         public DbSet<OpenIddictEntityFrameworkCoreToken>? Tokens { get; set; }
+        public DbSet<OpenIddictEntityFrameworkCoreScope>? Scopes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,11 +25,7 @@ namespace OppeniddictServer.Context
             base.OnModelCreating(modelBuilder);
 
             // Configure OpenIddict tables
-            modelBuilder.Entity<OpenIddictEntityFrameworkCoreApplication>(entity =>
-            {
-                entity.ToTable("OpenIddictApplications");
-            });
-
+            modelBuilder.Entity<OpenIddictEntityFrameworkCoreApplication>().ToTable("OpenIddictApplications");
             modelBuilder.Entity<OpenIddictEntityFrameworkCoreAuthorization>().ToTable("OpenIddictAuthorizations");
             modelBuilder.Entity<OpenIddictEntityFrameworkCoreToken>().ToTable("OpenIddictTokens");
             modelBuilder.Entity<OpenIddictEntityFrameworkCoreScope>().ToTable("OpenIddictScopes");

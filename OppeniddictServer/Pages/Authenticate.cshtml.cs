@@ -9,6 +9,10 @@ using OpenIddict.Abstractions;
 using System.Reflection;
 using System.Text.Json;
 using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore;
+using OppeniddictServer.ClientManager;
+using OppeniddictServer.Model;
+using NuGet.Protocol;
 
 namespace OppeniddictServer.Pages
 {
@@ -16,23 +20,18 @@ namespace OppeniddictServer.Pages
     {
         private readonly UserManager<UserIdentity> _userManager;
         private readonly IServiceProvider _serviceProvider;
-        
+        private readonly ClientSeeder _seeder;
+
+
         public ClientDetails clientDetails { get; set; } = new ClientDetails();
-
-        private readonly IOpenIddictApplicationManager _manager;
-        private readonly IOpenIddictScopeManager _scopeManager;
-//        private readonly RoleManager<UserIdentityRole> _roleManager;
-
         public AuthenticateModel(UserManager<UserIdentity> userManager, 
                                 IServiceProvider serviceProvider,
-                                IOpenIddictApplicationManager manager, 
-                                IOpenIddictScopeManager scopeManager)
+                                ClientSeeder seeder)
+                                
         {
             _userManager = userManager;
             _serviceProvider = serviceProvider;
-            _manager = manager;
-            _scopeManager = scopeManager;
-           // _roleManager = roleManager;
+            _seeder = seeder;
         }
         public string? Email { get; set; }
         public string? Password { get; set; }
@@ -48,11 +47,16 @@ namespace OppeniddictServer.Pages
 
         public async Task<IActionResult> OnPostAsync(string email, string password, string client_id, string appScopes,string redirectUri)
         {
+            await using var scope = _serviceProvider.CreateAsyncScope();
+            var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-            var clientExist= await ClientDetailsExist(client_id, appScopes, redirectUri);
-            if(!clientExist)
+            //var client = await manager.FindByClientIdAsync(client_id.ToString());
+
+            var clientExist =await _seeder.CheckClient(client_id);
+            if (clientExist==null)
             {
                 AuthStatus = "Parameter Mismatched or Invalid";
+                return Page();
             }
            
             var user = await _userManager.FindByNameAsync(email)
@@ -95,12 +99,22 @@ namespace OppeniddictServer.Pages
             return Page();
         }
 
-        private async Task<bool> ClientDetailsExist(string client_id, string appScopes,string providedredirectUri)
+/*        private async Task<bool> ClientDetailsExist(string client_id, string appScopes,string providedredirectUri)
         {
+            await using var scope = _serviceProvider.CreateAsyncScope();
+            var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+
             if (client_id == null)
                 return false;
-            var client = await _manager.FindByClientIdAsync(client_id);               //fetch database for the client details , no seediing now
-            
+            try {
+
+                var client = await manager.FindByClientIdAsync(client_id.ToString());              //fetch database for the client details , no seediing now
+
+            if (client == null)
+            {
+                AuthStatus = "Client not found or response is invalid.";
+                return false;
+            }
             //var apiscope = await _scopeManager.FindByNameAsync(appScopes);
 
             Type myType = client!.GetType()!;
@@ -127,14 +141,21 @@ namespace OppeniddictServer.Pages
             clientDetails.scopes= appScopes;
             clientDetails.ProvidedRedirectUri = providedredirectUri;
             ReturnUrl = clientDetails.returnUrl;
-            
-            if (clientDetails.SelectedRedirectUri == null || clientDetails.scopes == null || clientDetails.clientId == null)
+            }
+            catch (Exception ex)
+            {
+                AuthStatus = ex.Message;
+            }
+
+            if (clientDetails.SelectedRedirectUri == null ||
+                clientDetails.scopes == null ||
+                clientDetails.clientId == null)
                 return false;
 
             return true;
 
         }
-    }
+*/    }
 
 }
 public class ClientDetails

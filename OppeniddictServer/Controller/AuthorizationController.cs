@@ -95,8 +95,8 @@ namespace OppeniddictServer.Controller
 
 
             var email = result.Principal.FindFirst(ClaimTypes.Email)!.Value;                     //check for roles from db and adjust claims
-            //var id = result.Principal.FindFirst(ClaimTypes.SerialNumber)!.Value;               //check for id from db and adjust claims
-           // var cookiepath = result.Principal.FindFirst(ClaimTypes.CookiePath)!.Value;         //check for path from db and adjust claims
+                                                                                                 //var id = result.Principal.FindFirst(ClaimTypes.SerialNumber)!.Value;               //check for id from db and adjust claims
+                                                                                                 // var cookiepath = result.Principal.FindFirst(ClaimTypes.CookiePath)!.Value;         //check for path from db and adjust claims
             var role = result.Principal.FindFirst(ClaimTypes.Role)!.Value;                       //check for roles from db and adjust claims
             var subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;                   //check for subject from db and adjust claims
             var roleList = new List<string> {role.ToString() }.ToImmutableArray();

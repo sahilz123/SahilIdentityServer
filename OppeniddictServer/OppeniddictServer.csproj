@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\AdminIdentityDb\**" />
+    <Content Remove="Migrations\AdminIdentityDb\**" />
+    <EmbeddedResource Remove="Migrations\AdminIdentityDb\**" />
+    <None Remove="Migrations\AdminIdentityDb\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.36" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.36">

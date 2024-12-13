@@ -1,7 +1,10 @@
 ﻿using OpenIddict.Abstractions;
 using OppeniddictServer.Context;
 using OppeniddictServer.Model;
+using Polly;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace OppeniddictServer.ClientManager
@@ -38,13 +41,14 @@ namespace OppeniddictServer.ClientManager
 
         public async Task<string> AddClients(RegisterInput newClient)
         {
-            await using var scope = _serviceProvider.CreateAsyncScope();
-            //var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            await using var scope = _serviceProvider.CreateAsyncScope();            
+            var context = scope.ServiceProvider.GetRequiredService<OpenIddictDbContext>();
 
-            //await context.Database.EnsureCreatedAsync();
+            await context.Database.EnsureCreatedAsync();
 
             var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
-            //var client = await manager.FindByClientIdAsync("web-client");
+
+
             var client = await manager.FindByClientIdAsync(newClient.ClientId.ToString()!);
 
             if (client != null)
@@ -56,7 +60,7 @@ namespace OppeniddictServer.ClientManager
             {                
                 await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
-
+                    
                     ClientSecret = Guid.NewGuid().ToString(),
                     ClientId = newClient.ClientId.ToString(),
                     ConsentType = ConsentTypes.Explicit,
@@ -84,14 +88,26 @@ namespace OppeniddictServer.ClientManager
                         Scopes.OpenId,
                         $"{Permissions.Prefixes.Scope}api1"
                     },
-                    //Requirements =
-                    //{
-                    //    Requirements.Features.ProofKeyForCodeExchange
-                    //}
+                    Requirements =
+                    {
+                        Requirements.Features.ProofKeyForCodeExchange
+                    }
                 });
 
                 return $"Client Created {newClient.ClientId}";
             }
         }
+
+        public async Task<object?> CheckClient(string clientid="user")
+        {
+            await using var scope = _serviceProvider.CreateAsyncScope();
+            var context = scope.ServiceProvider.GetRequiredService<OpenIddictDbContext>();
+
+            await context.Database.EnsureCreatedAsync(); 
+            var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+
+            return await manager.FindByClientIdAsync(clientid);
+        }
+
     }
 }

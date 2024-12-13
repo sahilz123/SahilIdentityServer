@@ -19,11 +19,6 @@ namespace OppeniddictServer.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            //builder.Ignore<OpenIddictEntityFrameworkCoreApplication>();
-            //builder.Entity<ApplicationManager>(entity =>
-            //{
-            //    entity.ToTable("OpenIddictApplications"); 
-            //});
             ConfigureIdentityContext(builder);
         }
 
