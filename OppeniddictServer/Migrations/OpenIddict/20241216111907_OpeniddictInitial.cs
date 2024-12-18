@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace OppeniddictServer.Migrations.OpenIddict
+namespace OppeniddictServer.Migrations.Openiddict
 {
-    public partial class OpenIddictInitial : Migration
+    public partial class OpeniddictInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,6 @@ namespace OppeniddictServer.Migrations.OpenIddict
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApplicationType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ClientId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ClientSecret = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -41,6 +40,7 @@ namespace OppeniddictServer.Migrations.OpenIddict
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Descriptions = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -84,6 +84,7 @@ namespace OppeniddictServer.Migrations.OpenIddict
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApplicationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AuthorizationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
@@ -112,12 +113,12 @@ namespace OppeniddictServer.Migrations.OpenIddict
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_OpenIddictApplications_ClientId",
-                table: "OpenIddictApplications",
-                column: "ClientId",
-                unique: true,
-                filter: "[ClientId] IS NOT NULL");
+                migrationBuilder.CreateIndex(
+                    name: "IX_OpenIddictApplications_ClientId",
+                    table: "OpenIddictApplications",
+                    column: "ClientId",
+                    unique: true,
+                    filter: "[ClientId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictAuthorizations_ApplicationId_Status_Subject_Type",

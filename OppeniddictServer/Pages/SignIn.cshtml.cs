@@ -33,7 +33,7 @@ namespace OppeniddictServer.Pages
             RegisterInput = new RegisterInput();
         }
 
-        public IActionResult OnPostAsync([FromForm]RegisterInput RegisterInput)
+        /*public IActionResult OnPostAsync([FromForm]RegisterInput RegisterInput)
         {
             if (ModelState.IsValid)
             {
@@ -47,6 +47,6 @@ namespace OppeniddictServer.Pages
 
             return Page(); // Return the same page with validation errors
             
-        }
+        }*/
     }
 }

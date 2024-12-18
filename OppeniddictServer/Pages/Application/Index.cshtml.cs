@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace OppeniddictServer.Pages.Application
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User,Admin")]
     public class IndexModel : PageModel
     {
         private readonly OpenIddictDbContext _context;
@@ -20,9 +20,7 @@ namespace OppeniddictServer.Pages.Application
         public IList<OpenIddictEntityFrameworkCoreApplication> ApplicationManager { get;set; } = default!;
 
         public async Task OnGetAsync()
-        {
-
-            
+        {            
             if (_context.ApplicationManager != null)
             {
                 ApplicationManager = await _context.ApplicationManager.ToListAsync();

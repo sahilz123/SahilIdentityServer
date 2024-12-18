@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OpenIddict.Abstractions;
 using OppeniddictServer.Identity;
 using OppeniddictServer.Model;
+using OppeniddictServer.Openiddict;
 using System.Data;
 
 namespace OppeniddictServer.Pages
@@ -12,8 +14,6 @@ namespace OppeniddictServer.Pages
     {
 
         private readonly UserManager<UserIdentity> _userManager;
-        private readonly SignInManager<UserIdentity> _signInManager;
-        private readonly RoleManager<UserIdentityRole> _roleManager;
 
         [BindProperty]
         public string? FirstName { get; set; }
@@ -38,17 +38,14 @@ namespace OppeniddictServer.Pages
 
         [BindProperty]
         public string? ReturnUrl { get; set; }
+        public string? Scope { get; set; }
 
-        public ServerRegisterModel(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager,
-            RoleManager<UserIdentityRole> roleManager)
+        public ServerRegisterModel(UserManager<UserIdentity> userManager)                                  
         {
             _userManager = userManager;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
         }
-        public async void OnGet()
+        public void OnGet()
         {
-            Roles = _roleManager.Roles.ToList();
         }
 
         public async Task<IActionResult> OnPost()
@@ -69,7 +66,7 @@ namespace OppeniddictServer.Pages
                     ModelState.AddModelError(string.Empty, "Email is already taken.");
                     return Page();
                 }
-
+                               
                 // Create the user
                 var user = new UserIdentity
                 {
@@ -78,16 +75,14 @@ namespace OppeniddictServer.Pages
                 };
 
                var result= await _userManager.CreateAsync(user,Password);
+
                 if (result.Succeeded)
                 {
+                   // await _scopeManager.CreateAsync(,Scope,);
+
                     await _userManager.AddToRoleAsync(user, "Admin");  //assigning default user role
 
-                    //await _signInManager.SignInAsync(user, isPersistent: false);
-                    //ResponseMessage = "Registration successful!";
-
-
                     return Redirect("/ServerLogin" + parameters);
-                    //return Redirect(ReturnUrl);
                 }
 
                 if(result.Errors.Any())

@@ -79,10 +79,10 @@ namespace OppeniddictServer.Controller
                    });
             }
 
-            var application = await _applicationManager.FindByClientIdAsync(request.ClientId) ??
+            var application = await _applicationManager.FindByClientIdAsync(request.ClientId!) ??
                 throw new InvalidOperationException("Details concerning the calling client application cannot be found.");
 
-            var consentclaim = result.Principal.GetClaim(Constants.Constants.ConsentNaming);
+            var consentclaim = result.Principal!.GetClaim(Constants.Constants.ConsentNaming);
 
             if (consentclaim != Constants.Constants.GrantAccessValue)
             {
@@ -94,13 +94,13 @@ namespace OppeniddictServer.Controller
             
 
 
-            var email = result.Principal.FindFirst(ClaimTypes.Email)!.Value;                     //check for roles from db and adjust claims
-                                                                                                 //var id = result.Principal.FindFirst(ClaimTypes.SerialNumber)!.Value;               //check for id from db and adjust claims
-                                                                                                 // var cookiepath = result.Principal.FindFirst(ClaimTypes.CookiePath)!.Value;         //check for path from db and adjust claims
-            var role = result.Principal.FindFirst(ClaimTypes.Role)!.Value;                       //check for roles from db and adjust claims
-            var subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;                   //check for subject from db and adjust claims
-            var roleList = new List<string> {role.ToString() }.ToImmutableArray();
+            var email = result.Principal!.FindFirst(ClaimTypes.Email)!.Value;
 
+            var roles = result.Principal.FindAll(ClaimTypes.Role)
+                                        .Select(r => r.Value)
+                                        .ToImmutableArray();
+
+            var subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;
             var identity = new ClaimsIdentity(
             authenticationType: TokenValidationParameters.DefaultAuthenticationType,
             nameType: Claims.Name,
@@ -108,7 +108,8 @@ namespace OppeniddictServer.Controller
 
             identity.SetClaim(Claims.Subject, subject)
                     .SetClaim(Claims.Email, email)
-                    .SetClaims(Claims.Role, roleList);
+                    .SetClaims(Claims.Role, roles)
+            ;
             
 
             identity.SetScopes(request.GetScopes());
@@ -151,17 +152,17 @@ namespace OppeniddictServer.Controller
             
             // Retrieve the claims principal stored in the authorization code/refresh token.
             var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
-            var application = await _applicationManager.FindByClientIdAsync(request.ClientId);
+            var application = await _applicationManager.FindByClientIdAsync(request.ClientId!);
 
-// Log the claims
+            // Log the claims
             var claims = result.Principal!.Claims.ToList();
 
-            var email = result.Principal.GetClaim(Claims.Email);               //check for roles from db and adjust claims
-            var id = result.Principal.GetClaim(Claims.ClientId);               //check for id from db and adjust claims
-                                                                               //var cookiepath = result.Principal.FindFirst(ClaimTypes.CookiePath)!.Value;               //check for path from db and adjust claims
-            var role = result.Principal.GetClaim(Claims.Role);                 //check for roles from db and adjust claims
-            var subject = result.Principal.GetClaim(Claims.Email);             //check for subject from db and adjust claims
-            var roleList = new List<string> { role.ToString() }.ToImmutableArray();
+            var email = result.Principal.GetClaim(Claims.Email);              
+            var id = result.Principal.GetClaim(Claims.ClientId);               
+                                                                               
+            var role = result.Principal.GetClaims(Claims.Role);                 
+            var subject = result.Principal.GetClaim(Claims.Email);             
+            var roleList = new List<string> { role.ToString()! }.ToImmutableArray();
 
             if (string.IsNullOrEmpty(email))
                 {
@@ -197,8 +198,8 @@ namespace OppeniddictServer.Controller
         [HttpPost("~/connect/logout")]
         public async Task<IActionResult> LogoutPost()
         {
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
             return SignOut(
                 authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
                 properties: new AuthenticationProperties

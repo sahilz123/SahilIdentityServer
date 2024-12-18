@@ -2,30 +2,11 @@
 
 namespace OppeniddictServer.Identity
 {
-	public class UserIdentityRole : IdentityRole
-	{
-        public UserIdentityRole()
-        {            
-        }
-
-    }
-    public static class SeedRoles
+    public class UserIdentityRole : IdentityRole
     {
-        public static async Task Initialize(IServiceProvider serviceProvider, RoleManager<UserIdentityRole> roleManager)
+        public UserIdentityRole()
         {
-            //string[] roleNames = { "Admin", "User", "Manager" };
-
-            //foreach (var roleName in roleNames)
-            //{
-            //    var roleExist = await roleManager.RoleExistsAsync(roleName);
-            //    if (!roleExist)
-            //    {
-            //        var role = new UserIdentityRole { Name = roleName };
-            //        await roleManager.CreateAsync(role);
-            //    }
-            //}
         }
+
     }
-
-
 }

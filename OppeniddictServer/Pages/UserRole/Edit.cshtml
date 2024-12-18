@@ -1,0 +1,45 @@
+﻿@page
+@model OppeniddictServer.Pages.UserRole.EditModel
+@{
+    ViewData["Title"] = "Edit User Role";
+}
+
+<h2>Edit User Role</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- User ID (Readonly) -->
+            <div class="form-group">
+                <label asp-for="UserIdentityUserRole.UserId" class="control-label">User ID</label>
+                <input asp-for="UserIdentityUserRole.UserId" class="form-control" readonly />
+            </div>
+
+            <!-- User Name (Display Only) -->
+            <div class="form-group">
+                <label>User Name</label>
+                <input type="text" class="form-control" value="@Model.UserName.ToString()" disabled />
+            </div>
+
+            <!-- Roles Selection (Multiple) -->
+            <div class="form-group">
+                <label>Roles</label>
+                <select asp-for="SelectedRoles" class="form-control" multiple>
+                    @foreach (var role in Model.AvailableRoles)
+                    {
+                        <option value="@role.Id" selected="@(Model.SelectedRoles.Contains(role.Id) ? "selected" : null)">
+                            @role.Name
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

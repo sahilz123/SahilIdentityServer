@@ -9,11 +9,11 @@ using OppeniddictServer.Context;
 
 #nullable disable
 
-namespace OppeniddictServer.Migrations.OpenIddict
+namespace OppeniddictServer.Migrations.Openiddict
 {
     [DbContext(typeof(OpenIddictDbContext))]
-    [Migration("20241202062342_OpenIddictInitial")]
-    partial class OpenIddictInitial
+    [Migration("20241216111907_OpeniddictInitial")]
+    partial class OpeniddictInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,10 +54,6 @@ namespace OppeniddictServer.Migrations.OpenIddict
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");
 
@@ -92,8 +88,6 @@ namespace OppeniddictServer.Migrations.OpenIddict
                         .HasFilter("[ClientId] IS NOT NULL");
 
                     b.ToTable("OpenIddictApplications", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("OpenIddictEntityFrameworkCoreApplication");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
@@ -155,6 +149,10 @@ namespace OppeniddictServer.Migrations.OpenIddict
                     b.Property<string>("Descriptions")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");
 
@@ -178,6 +176,8 @@ namespace OppeniddictServer.Migrations.OpenIddict
                         .HasFilter("[Name] IS NOT NULL");
 
                     b.ToTable("OpenIddictScopes", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("OpenIddictEntityFrameworkCoreScope");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken", b =>
@@ -199,6 +199,10 @@ namespace OppeniddictServer.Migrations.OpenIddict
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("datetime2");
@@ -239,13 +243,22 @@ namespace OppeniddictServer.Migrations.OpenIddict
                     b.HasIndex("ApplicationId", "Status", "Subject", "Type");
 
                     b.ToTable("OpenIddictTokens", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("OpenIddictEntityFrameworkCoreToken");
                 });
 
-            modelBuilder.Entity("OppeniddictServer.Openiddict.ApplicationManager", b =>
+            modelBuilder.Entity("OppeniddictServer.Openiddict.ScopesManager", b =>
                 {
-                    b.HasBaseType("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication");
+                    b.HasBaseType("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreScope");
 
-                    b.HasDiscriminator().HasValue("ApplicationManager");
+                    b.HasDiscriminator().HasValue("ScopesManager");
+                });
+
+            modelBuilder.Entity("OppeniddictServer.Openiddict.TokenManager", b =>
+                {
+                    b.HasBaseType("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken");
+
+                    b.HasDiscriminator().HasValue("TokenManager");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>

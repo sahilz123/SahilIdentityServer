@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,12 @@ using OppeniddictServer.Identity;
 
 namespace OppeniddictServer.Pages.Role
 {
+    [Authorize]
     public class DetailsModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
 
-        public DetailsModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+        public DetailsModel(AdminIdentityDbContext context)
         {
             _context = context;
         }

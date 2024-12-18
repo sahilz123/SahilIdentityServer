@@ -1,0 +1,62 @@
+﻿@page
+@model OppeniddictServer.Pages.Scope.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>ScopesManager</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="ScopesManager.Description" class="control-label"></label>
+                <input asp-for="ScopesManager.Description" class="form-control" />
+                <span asp-validation-for="ScopesManager.Description" class="text-danger"></span>
+            </div>
+           
+            <div class="form-group">
+                <label asp-for="ScopesManager.DisplayName" class="control-label"></label>
+                <input asp-for="ScopesManager.DisplayName" class="form-control" />
+                <span asp-validation-for="ScopesManager.DisplayName" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="ScopesManager.Name" class="control-label"></label>
+                <input asp-for="ScopesManager.Name" class="form-control" />
+                <span asp-validation-for="ScopesManager.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScopesManager.Properties" class="control-label"></label>
+                <input asp-for="ScopesManager.Properties" class="form-control" />
+                <span asp-validation-for="ScopesManager.Properties" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScopesManager.Resources" class="control-label"></label>
+                <input asp-for="ScopesManager.Resources" class="form-control" />
+                <span asp-validation-for="ScopesManager.Resources" class="text-danger"></span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Status))
+            {
+                <div class="message"> @Model.Status</div>
+            }
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

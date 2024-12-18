@@ -1,4 +1,6 @@
 ﻿using OpenIddict.Abstractions;
+using OpenIddict.Core;
+using OpenIddict.EntityFrameworkCore.Models;
 using OppeniddictServer.Context;
 using OppeniddictServer.Model;
 using Polly;
@@ -6,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using static OppeniddictServer.Pages.Scope.CreateModel;
 
 namespace OppeniddictServer.ClientManager
 {
@@ -17,26 +20,45 @@ namespace OppeniddictServer.ClientManager
             _serviceProvider = serviceProvider;
         }
 
-        public async Task AddScopes()
+        public async Task AddScopes(ScopeInputModel scopeInput = null)
         {
             await using var scope = _serviceProvider.CreateAsyncScope();
-            var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
+           // var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
+            var manager = scope.ServiceProvider.GetRequiredService<OpenIddictScopeManager<OpenIddictEntityFrameworkCoreScope>>();
 
-            var apiscope = await manager.FindByNameAsync("api1");
+            var apiscope = await manager.FindByNameAsync(scopeInput.Name);
 
             if (apiscope != null)
             {
                 await manager.DeleteAsync(apiscope);
             }
 
-            await manager.CreateAsync(new OpenIddictScopeDescriptor
+            var scopeDescriptor = new OpenIddictScopeDescriptor
             {
-                DisplayName = "API Scope",                      //can be saved in database for client
-                Name = "api1",
-                Resources ={
-                    "resource_server_1"
-                    }
-            });
+                Description = scopeInput.Description,
+                DisplayName = scopeInput.DisplayName,
+                Name = scopeInput.Name,
+            };
+
+            if (scopeInput.Resources?.Count > 0)
+            {
+                foreach (var resource in scopeInput.Resources)
+                {
+                    scopeDescriptor.Resources.Add(resource);
+                }
+            }
+
+            await manager.CreateAsync(scopeDescriptor);
+
+
+            //    await manager.CreateAsync(new OpenIddictScopeDescriptor
+            //{
+            //    DisplayName = "API Scope",    
+            //    Name = "api1",
+            //    Resources ={
+            //        "resource_server_1"
+            //        }
+            //});
         }
 
         public async Task<string> AddClients(RegisterInput newClient)

@@ -7,6 +7,7 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 using OppeniddictServer.Context;
 using Microsoft.AspNetCore.Identity;
 using OppeniddictServer.Identity;
+using OppeniddictServer.Openiddict;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -110,6 +111,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddScoped<ClientSeeder>();
+builder.Services.AddScoped<ScopesManager>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",

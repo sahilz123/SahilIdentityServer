@@ -16,13 +16,32 @@ namespace OppeniddictServer.Context
         //public DbSet<ApplicationManager>? ApplicationManager { get; set; }
         public DbSet<OpenIddictEntityFrameworkCoreApplication>? ApplicationManager { get; set; }
         public DbSet<OpenIddictEntityFrameworkCoreAuthorization>? Authorizations { get; set; }
-        public DbSet<OpenIddictEntityFrameworkCoreToken>? Tokens { get; set; }
-        public DbSet<OpenIddictEntityFrameworkCoreScope>? Scopes { get; set; }
+
+        public DbSet<OpenIddictEntityFrameworkCoreScope>? ScopesManager { get; set; }
+        public DbSet<OpenIddictEntityFrameworkCoreToken>? TokenManager { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<OpenIddictEntityFrameworkCoreApplication>()
+                  .HasDiscriminator<string>("Discriminator")
+                  .HasValue<OpenIddictEntityFrameworkCoreApplication>("OpenIddictEntityFrameworkCoreApplication")
+                  .HasValue<ApplicationManager>("ApplicationManager");
+
+            modelBuilder.Entity<OpenIddictEntityFrameworkCoreScope>()
+                 .HasDiscriminator<string>("Discriminator")                                            
+                 .HasValue<OpenIddictEntityFrameworkCoreScope>("OpenIddictEntityFrameworkCoreScope") 
+                 .HasValue<ScopesManager>("ScopeManager");
+
+
+            modelBuilder.Entity<OpenIddictEntityFrameworkCoreToken>()
+                 .HasDiscriminator<string>("Discriminator")
+                 .HasValue<OpenIddictEntityFrameworkCoreToken>("OpenIddictEntityFrameworkCoreToken")
+                 .HasValue<TokenManager>("TokenManager");
+
 
             // Configure OpenIddict tables
             modelBuilder.Entity<OpenIddictEntityFrameworkCoreApplication>().ToTable("OpenIddictApplications");
@@ -30,5 +49,6 @@ namespace OppeniddictServer.Context
             modelBuilder.Entity<OpenIddictEntityFrameworkCoreToken>().ToTable("OpenIddictTokens");
             modelBuilder.Entity<OpenIddictEntityFrameworkCoreScope>().ToTable("OpenIddictScopes");
         }
+
     }
 }

@@ -36,7 +36,7 @@
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3"> Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-3"> Identity <sup>2</sup></div>
             </a>
 
             <!-- Divider -->
@@ -93,7 +93,7 @@
                     <div id="collapseUser" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">Users:</h6>
-                            <a class="collapse-item" href="~/Application/Index">Register New User</a>
+                            <a class="collapse-item" href="~/ServerRegister">Register New User</a>
 
                         </div>
                     </div>
@@ -101,7 +101,7 @@
 
                 <!-- Divider -->
                 <hr class="sidebar-divider">
-
+                            
                 <!-- Heading Roles -->
                 <div class="sidebar-heading">
                     Roles
@@ -118,7 +118,55 @@
                             <h6 class="collapse-header">Roles:</h6>
                             <a class="collapse-item" href="~/Role/Index">View All Roles</a>
                             <a class="collapse-item" href="~/Role/Create">Create New Roles</a>
+                            <a class="collapse-item" href="~/UserRole">View User-Roles</a>
 
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+
+                <!-- Heading Scopes -->
+                <div class="sidebar-heading">
+                    Scopes
+                </div>
+                <!-- Nav Item - Application Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseScopes"
+                       aria-expanded="true" aria-controls="collapseScopes">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>Manage Scopes</span>
+                    </a>
+                    <div id="collapseScopes" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Scopes:</h6>
+                            <a class="collapse-item" href="~/Scope/Index">View All Scopes</a>
+                            <a class="collapse-item" href="~/Scope/Create">Create New Scopes</a>
+
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+
+                <!-- Heading Tokens -->
+                <div class="sidebar-heading">
+                    Tokens
+                </div>
+                <!-- Nav Item - Application Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTokens"
+                       aria-expanded="true" aria-controls="collapseTokens">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>View Tokens</span>
+                    </a>
+                    <div id="collapseTokens" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Tokens/Code:</h6>
+                            <a class="collapse-item" href="~/Tokens/Index">View All Tokens/Code</a>
+                           
                         </div>
                     </div>
                 </li>
@@ -413,6 +461,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
                                 <img class="img-profile rounded-circle"
                                      src="~/img/undraw_profile.svg"

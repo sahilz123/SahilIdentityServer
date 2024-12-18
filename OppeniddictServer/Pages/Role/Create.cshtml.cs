@@ -14,9 +14,9 @@ namespace OppeniddictServer.Pages.Role
     [Authorize(Roles = "User")]
     public class CreateModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
 
-        public CreateModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+        public CreateModel(AdminIdentityDbContext context)
         {
             _context = context;
         }
@@ -29,8 +29,6 @@ namespace OppeniddictServer.Pages.Role
         [BindProperty]
         public UserIdentityRole UserIdentityRole { get; set; } = default!;
         
-
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
           if (!ModelState.IsValid || _context.Roles == null || UserIdentityRole == null)

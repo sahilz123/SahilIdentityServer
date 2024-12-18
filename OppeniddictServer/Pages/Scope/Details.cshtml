@@ -1,0 +1,67 @@
+﻿@page
+@model OppeniddictServer.Pages.Scope.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>ScopesManager</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScopesManager.ConcurrencyToken)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScopesManager.ConcurrencyToken)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScopesManager.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScopesManager.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScopesManager.Descriptions)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScopesManager.Descriptions)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScopesManager.DisplayName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScopesManager.DisplayName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScopesManager.DisplayNames)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScopesManager.DisplayNames)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScopesManager.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScopesManager.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScopesManager.Properties)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScopesManager.Properties)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScopesManager.Resources)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScopesManager.Resources)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.ScopesManager?.Id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>

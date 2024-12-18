@@ -1,0 +1,94 @@
+﻿@page
+@model OppeniddictServer.Pages.Tokens.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<div style="overflow-x: auto; width: 100%;">
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].ConcurrencyToken)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].CreationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].ExpirationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].Payload)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].Properties)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].RedemptionDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].ReferenceId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].Subject)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TokenManager[0].Type)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.TokenManager) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConcurrencyToken)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpirationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Payload)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Properties)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RedemptionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReferenceId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subject)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</div>

@@ -1,0 +1,63 @@
+﻿@page
+@model OppeniddictServer.Pages.UserRole.IndexModel
+
+@{
+    ViewData["Title"] = "UserRole Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdentityUser.Id)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.IdentityUser.Email)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.IdentityUser.UserName)
+            </th>
+            
+            <th>
+                RoleName
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.UserRolesData)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+
+                <td>
+                    @item.Email
+                </td>
+
+                <td>
+                    @item.UserName
+                </td>
+
+                <td>
+                    @item.RoleName
+                </td>
+
+                <td>
+                    <div class="d-flex flex-column">
+                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm mb-1">Edit</a>
+                        <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm mb-1">Details</a>
+                        @* <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a> *@
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

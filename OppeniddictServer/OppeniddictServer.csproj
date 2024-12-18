@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\AdminIdentityDb\**" />
+    <Compile Remove="Pages\Admin\**" />
     <Content Remove="Migrations\AdminIdentityDb\**" />
+    <Content Remove="Pages\Admin\**" />
     <EmbeddedResource Remove="Migrations\AdminIdentityDb\**" />
+    <EmbeddedResource Remove="Pages\Admin\**" />
     <None Remove="Migrations\AdminIdentityDb\**" />
+    <None Remove="Pages\Admin\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,9 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\OpenIddict\" />
     <Folder Include="Pages\Claim\" />
-    <Folder Include="Pages\User\" />
-    <Folder Include="Pages\Scope\" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,80 @@
+﻿@page
+@model OppeniddictServer.Pages.Tokens.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>TokenManager</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TokenManager.ConcurrencyToken" class="control-label"></label>
+                <input asp-for="TokenManager.ConcurrencyToken" class="form-control" />
+                <span asp-validation-for="TokenManager.ConcurrencyToken" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TokenManager.CreationDate" class="control-label"></label>
+                <input asp-for="TokenManager.CreationDate" class="form-control" />
+                <span asp-validation-for="TokenManager.CreationDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TokenManager.ExpirationDate" class="control-label"></label>
+                <input asp-for="TokenManager.ExpirationDate" class="form-control" />
+                <span asp-validation-for="TokenManager.ExpirationDate" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="TokenManager.Id" />
+            <div class="form-group">
+                <label asp-for="TokenManager.Payload" class="control-label"></label>
+                <input asp-for="TokenManager.Payload" class="form-control" />
+                <span asp-validation-for="TokenManager.Payload" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TokenManager.Properties" class="control-label"></label>
+                <input asp-for="TokenManager.Properties" class="form-control" />
+                <span asp-validation-for="TokenManager.Properties" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TokenManager.RedemptionDate" class="control-label"></label>
+                <input asp-for="TokenManager.RedemptionDate" class="form-control" />
+                <span asp-validation-for="TokenManager.RedemptionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TokenManager.ReferenceId" class="control-label"></label>
+                <input asp-for="TokenManager.ReferenceId" class="form-control" />
+                <span asp-validation-for="TokenManager.ReferenceId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TokenManager.Status" class="control-label"></label>
+                <input asp-for="TokenManager.Status" class="form-control" />
+                <span asp-validation-for="TokenManager.Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TokenManager.Subject" class="control-label"></label>
+                <input asp-for="TokenManager.Subject" class="form-control" />
+                <span asp-validation-for="TokenManager.Subject" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TokenManager.Type" class="control-label"></label>
+                <input asp-for="TokenManager.Type" class="form-control" />
+                <span asp-validation-for="TokenManager.Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

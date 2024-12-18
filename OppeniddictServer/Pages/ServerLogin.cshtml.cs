@@ -36,10 +36,13 @@ namespace OppeniddictServer.Pages
         public string? ReturnUrl { get; set; }
 
         [BindProperty]
-        public string RememberMe { get; set; }
+        public string? RememberMe { get; set; }
         
         [BindProperty]
-        public string Status { get; set; } 
+        public string? Status { get; set; }
+
+        [BindProperty]
+        public string? Client_Id { get; set; } = "";
 
 
 
@@ -49,9 +52,9 @@ namespace OppeniddictServer.Pages
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        public async Task<IActionResult> OnPost(string client_id=null!)
+        public async Task<IActionResult> OnPost()
         {
-            if (client_id == null)
+            if (ReturnUrl == null)
             {
                 return await ServerLogin();
             }
@@ -59,27 +62,29 @@ namespace OppeniddictServer.Pages
 
                 //string client_id = "";
                 string queryString = ReturnUrl.Split('?')[1];
-            var queryParams = queryString.Split('&');
+                var queryParams = queryString.Split('&');
  
             foreach (var param in queryParams)
             {
                 var keyValue = param.Split('=');
-                string key = keyValue[0];
-                string value = keyValue[1];
+                
                 if (keyValue[0]=="client_id")
                 {
-                    client_id = keyValue[1];
+                    Client_Id = keyValue[1];
                     break;
                 }
 
             }
 
-            var clientExist = await _seeder.CheckClient(client_id);
+            var clientExist = await _seeder.CheckClient(Client_Id!);
             if (clientExist == null)
             {
                 //AuthStatus = "Parameter Mismatched or Invalid";
                 return Page();
             }
+
+            ModelState.Remove(nameof(Client_Id));
+
             if (!ModelState.IsValid)
             {
                 return Page();

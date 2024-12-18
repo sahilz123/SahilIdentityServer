@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
 using OpenIddict.Abstractions;
+using OpenIddict.EntityFrameworkCore.Models;
 using OppeniddictServer.ClientManager;
 using OppeniddictServer.Context;
 using OppeniddictServer.Model;
@@ -21,23 +22,32 @@ namespace OppeniddictServer.Pages.Application
     {
         private readonly OpenIddictDbContext _context;
         private readonly ClientSeeder _seeder;
+        private readonly ScopesManager _scope;
 
-        public CreateModel(OpenIddictDbContext context,ClientSeeder seeder)
+        public CreateModel(OpenIddictDbContext context,ClientSeeder seeder, ScopesManager scope)
         {
             _context = context;
             _seeder = seeder;
+            _scope = scope;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGet()
         {
+            AvailableScopes =  await _scope.GetAvailableScopes();
+
             return Page();
         }
 
         [BindProperty]
         public ApplicationManager ApplicationManager { get; set; } = default!;
         
+        [BindProperty]
+        public IList<OpenIddictEntityFrameworkCoreScope> AvailableScopes { get; set; } = default!;
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+        [BindProperty]
+        public List<string> SelectedScopes { get; set; } = new List<string>();
+
+
         public async Task<IActionResult> OnPostAsync()
         {
           if (!ModelState.IsValid || _context.ApplicationManager == null || ApplicationManager == null)
@@ -45,78 +55,19 @@ namespace OppeniddictServer.Pages.Application
                 return Page();
             }
 
-            //_context.ApplicationManager.Add(ApplicationManager);
-            //await _context.SaveChangesAsync();
             var registerInput = new RegisterInput()
             {
                 ClientId = ApplicationManager.ClientId,
-                DisplayName=ApplicationManager.DisplayName,
-                RedirectUris=ApplicationManager.RedirectUris,
-                Permissions=ApplicationManager.Permissions
-
+                DisplayName = ApplicationManager.DisplayName,
+                RedirectUris = ApplicationManager.RedirectUris,
+                Permissions = ApplicationManager.Permissions,
+                Scopes = SelectedScopes
             };
-            var seedclient=_seeder.AddClients(registerInput).GetAwaiter().GetResult();
+            var seedclient= _seeder.AddClients(registerInput).GetAwaiter().GetResult();
 
             return RedirectToPage("./Index");
         }
-
-/*        public async Task<string> AddClients(RegisterInput newClient)
-        {
-            await using var scope = _serviceProvider.CreateAsyncScope();
-            //var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            //await context.Database.EnsureCreatedAsync();
-
-            var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
-            //var client = await manager.FindByClientIdAsync("web-client");
-            var client = await manager.FindByClientIdAsync(newClient.ClientId.ToString()!);
-
-            if (client != null)
-            {
-                return "Client Already Exist";
-                //await manager.DeleteAsync(client);
-            }
-            else
-            {
-                await manager.CreateAsync(new OpenIddictApplicationDescriptor
-                {
-
-                    ClientSecret = Guid.NewGuid().ToString(),
-                    ClientId = newClient.ClientId.ToString(),
-                    ConsentType = ConsentTypes.Explicit,
-                    DisplayName = newClient.DisplayName,
-                    RedirectUris =
-                    {
-                       new Uri(newClient.RedirectUris!.Trim())
-                    },
-                    Permissions =
-                    {
-                        Permissions.Endpoints.Authorization,
-                        Permissions.Endpoints.Logout,
-                        Permissions.Endpoints.Token,
-
-                        Permissions.GrantTypes.RefreshToken,
-                        Permissions.GrantTypes.ClientCredentials,
-                        Permissions.GrantTypes.AuthorizationCode,
-
-                        Permissions.ResponseTypes.Code,
-
-                        Permissions.Scopes.Email,
-                        Permissions.Scopes.Profile,
-                        Permissions.Scopes.Roles,
-                        Scopes.OfflineAccess,
-                        Scopes.OpenId,
-                        $"{Permissions.Prefixes.Scope}api1"
-                    },
-                    //Requirements =
-                    //{
-                    //    Requirements.Features.ProofKeyForCodeExchange
-                    //}
-                });
-
-                return $"Client Created {newClient.ClientId}";
-            }
-        }
-*/
     }
+
+    
 }

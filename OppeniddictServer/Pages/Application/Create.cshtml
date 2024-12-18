@@ -12,32 +12,35 @@
 <div class="row">
     <div class="col-md-4">
         <form method="post">
+            
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-           @*  <div class="form-group">
-                <label asp-for="ApplicationManager.ApplicationType" class="control-label"></label>
-                <input asp-for="ApplicationManager.ApplicationType" class="form-control" />
-                <span asp-validation-for="ApplicationManager.ApplicationType" class="text-danger"></span>
-            </div> *@
+            <!-- Scopes Selection (Multiple) -->
+            <div class="form-group">
+                <label>Scope Of the Project</label>
+                <select asp-for="SelectedScopes" class="form-control" multiple>
+                    @foreach (var s in Model.AvailableScopes)
+                    {
+                        <option value="@s.Id" selected="@(Model.SelectedScopes.Contains(s.Id) ? "selected" : null)">
+                            @s.Name
+                        </option>
+                    }
+                </select>
+            </div>
+            <div>
+                <a asp-page="/Scope/Create">Create Your Own Scopes/Resources</a>
+            </div>
             <div class="form-group">
                 <label asp-for="ApplicationManager.ClientId" class="control-label"></label>
                 <input asp-for="ApplicationManager.ClientId" class="form-control" />
                 <span asp-validation-for="ApplicationManager.ClientId" class="text-danger"></span>
             </div>
-           @*  <div class="form-group">
-                <label asp-for="ApplicationManager.ClientSecret" class="control-label"></label>
-                <input asp-for="ApplicationManager.ClientSecret" class="form-control" />
-                <span asp-validation-for="ApplicationManager.ClientSecret" class="text-danger"></span>
-            </div> *@
+           
             <div class="form-group">
                 <label asp-for="ApplicationManager.ClientType" class="control-label"></label>
                 <input asp-for="ApplicationManager.ClientType" class="form-control" />
                 <span asp-validation-for="ApplicationManager.ClientType" class="text-danger"></span>
             </div>
-            @* <div class="form-group">
-                <label asp-for="ApplicationManager.ConcurrencyToken" class="control-label"></label>
-                <input asp-for="ApplicationManager.ConcurrencyToken" class="form-control" />
-                <span asp-validation-for="ApplicationManager.ConcurrencyToken" class="text-danger"></span>
-            </div> *@
+           
             <div class="form-group">
                 <label asp-for="ApplicationManager.ConsentType" class="control-label"></label>
                 <input asp-for="ApplicationManager.ConsentType" class="form-control" />
@@ -48,16 +51,7 @@
                 <input asp-for="ApplicationManager.DisplayName" class="form-control" />
                 <span asp-validation-for="ApplicationManager.DisplayName" class="text-danger"></span>
             </div>
-           @*  <div class="form-group">
-                <label asp-for="ApplicationManager.DisplayNames" class="control-label"></label>
-                <input asp-for="ApplicationManager.DisplayNames" class="form-control" />
-                <span asp-validation-for="ApplicationManager.DisplayNames" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApplicationManager.JsonWebKeySet" class="control-label"></label>
-                <input asp-for="ApplicationManager.JsonWebKeySet" class="form-control" />
-                <span asp-validation-for="ApplicationManager.JsonWebKeySet" class="text-danger"></span>
-            </div> *@
+           
             <div class="form-group">
                 <label asp-for="ApplicationManager.Permissions" class="control-label"></label>
                 <input asp-for="ApplicationManager.Permissions" class="form-control" />
@@ -78,16 +72,7 @@
                 <input asp-for="ApplicationManager.RedirectUris" class="form-control" />
                 <span asp-validation-for="ApplicationManager.RedirectUris" class="text-danger"></span>
             </div>
-           @*  <div class="form-group">
-                <label asp-for="ApplicationManager.Requirements" class="control-label"></label>
-                <input asp-for="ApplicationManager.Requirements" class="form-control" />
-                <span asp-validation-for="ApplicationManager.Requirements" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApplicationManager.Settings" class="control-label"></label>
-                <input asp-for="ApplicationManager.Settings" class="form-control" />
-                <span asp-validation-for="ApplicationManager.Settings" class="text-danger"></span>
-            </div> *@
+           
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
