@@ -7,6 +7,7 @@ using Polly;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using static OppeniddictServer.Pages.Scope.CreateModel;
 
@@ -63,6 +64,12 @@ namespace OppeniddictServer.ClientManager
 
         public async Task<string> AddClients(RegisterInput newClient)
         {
+            StringBuilder scopestring =new("");
+
+            foreach(var x in newClient.Scopes)
+            {
+                scopestring.Append(x+" ");
+            }
             await using var scope = _serviceProvider.CreateAsyncScope();            
             var context = scope.ServiceProvider.GetRequiredService<OpenIddictDbContext>();
 
@@ -108,7 +115,9 @@ namespace OppeniddictServer.ClientManager
                         Permissions.Scopes.Roles,
                         Scopes.OfflineAccess,
                         Scopes.OpenId,
-                        $"{Permissions.Prefixes.Scope}api1"
+
+
+                        $"{Permissions.Prefixes.Scope}{scopestring}"
                     },
                     Requirements =
                     {

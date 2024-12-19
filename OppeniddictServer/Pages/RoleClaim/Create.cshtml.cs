@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,34 +14,57 @@ namespace OppeniddictServer.Pages.RoleClaim
 {
     public class CreateModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
+        public readonly RoleManager<UserIdentityRole> _roleManager;
 
-        public CreateModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+
+        public CreateModel(AdminIdentityDbContext context, RoleManager<UserIdentityRole> roleManager)
         {
+            _roleManager = roleManager;
             _context = context;
         }
 
         public IActionResult OnGet()
         {
+            Role = _roleManager.Roles.ToList();
+
             return Page();
         }
 
         [BindProperty]
-        public UserIdentityRoleClaim UserIdentityRoleClaim { get; set; } = default!;
-        
+        public UserIdentityRoleClaim RoleClaim { get; set; } = default!;
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+        [BindProperty]
+        public IList<UserIdentityRole> Role { get; set; } = default!;
+
+        [BindProperty]
+        public string SelectedRoleId { get; set; }
+        
+        [BindProperty]
+        public UserIdentityRole SelectedRole { get; set; }
+
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.RoleClaims == null || UserIdentityRoleClaim == null)
+
+            SelectedRole = _roleManager.FindByIdAsync(SelectedRoleId).Result;
+
+            if (SelectedRole is not null)
             {
-                return Page();
+                RoleClaim.RoleId = SelectedRoleId;
+
+                if (!ModelState.IsValid || _context.RoleClaims == null || RoleClaim.RoleId == null || RoleClaim.ClaimValue == null)
+                {
+                    return Page();
+                }
+
+                var claim = new Claim(RoleClaim.ClaimType, RoleClaim.ClaimValue);
+
+
+                await _roleManager.AddClaimAsync(SelectedRole!, claim);
+
+                return RedirectToPage("./Index");
             }
-
-            _context.RoleClaims.Add(UserIdentityRoleClaim);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
+            return Page();
         }
     }
 }

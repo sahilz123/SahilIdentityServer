@@ -17,9 +17,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ApplicationManager[0].ApplicationType)
-            </th>
+            
             <th>
                 @Html.DisplayNameFor(model => model.ApplicationManager[0].ClientId)
             </th>
@@ -38,12 +36,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.ApplicationManager[0].DisplayName)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ApplicationManager[0].DisplayNames)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ApplicationManager[0].JsonWebKeySet)
-            </th>
+           
             <th>
                 @Html.DisplayNameFor(model => model.ApplicationManager[0].Permissions)
             </th>
@@ -59,23 +52,19 @@
             <th>
                 @Html.DisplayNameFor(model => model.ApplicationManager[0].Requirements)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ApplicationManager[0].Settings)
-            </th>
-            <th>Scopes</th>
+            
+           
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.ApplicationManager) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApplicationType)
-            </td>
-            <td>
+
+            <td  style="max-width: 175px;">
                 @Html.DisplayFor(modelItem => item.ClientId)
             </td>
-            <td class="text-truncate" style="max-width: 75px;">
+            <td class="text-truncate" style="max-width: 175px;">
                 @Html.DisplayFor(modelItem => item.ClientSecret)
             </td>
             <td>
@@ -90,35 +79,24 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DisplayName)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DisplayNames)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.JsonWebKeySet)
-            </td>
-            <td>
+
+
+            <td class="text-truncate" style="max-width: 175px;">
                 @Html.DisplayFor(modelItem => item.Permissions)
             </td>
-            <td>
+            <td class="text-truncate" style="max-width: 175px;">
                 @Html.DisplayFor(modelItem => item.PostLogoutRedirectUris)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Properties)
             </td>
-            <td>
+            <td class="text-truncate" style="max-width: 175px;">
                 @Html.DisplayFor(modelItem => item.RedirectUris)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Requirements)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Settings)
-            </td>
-                <td>
-                    <div class="d-flex flex-column">
-                          <a asp-page="./Scopes" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Add Scopes</a>
-                    </div>
-                </td>
+           
                 <td>
                     <div class="d-flex flex-column">
                         <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm mb-1">Edit</a>

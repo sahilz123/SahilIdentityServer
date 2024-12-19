@@ -116,7 +116,7 @@ namespace OppeniddictServer.Migrations.Identity
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("OppeniddictServer.Identity.UserIdentityRoleClaim", b =>
+            modelBuilder.Entity("OppeniddictServer.Identity.RoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -222,7 +222,7 @@ namespace OppeniddictServer.Migrations.Identity
                     b.ToTable("UserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("OppeniddictServer.Identity.UserIdentityRoleClaim", b =>
+            modelBuilder.Entity("OppeniddictServer.Identity.RoleClaim", b =>
                 {
                     b.HasOne("OppeniddictServer.Identity.UserIdentityRole", null)
                         .WithMany()

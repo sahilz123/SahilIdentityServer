@@ -14,18 +14,28 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="UserIdentityRoleClaim.RoleId" class="control-label"></label>
-                <select asp-for="UserIdentityRoleClaim.RoleId" class ="form-control" asp-items="ViewBag.RoleId"></select>
+                <label asp-for="Role" class="control-label"> Pick A Role</label>
+                <select asp-for="SelectedRoleId" class="form-control">
+                    <option value="" disabled selected>-- Select a Role --</option>
+                    @foreach (var s in Model.Role)
+                    {
+
+                        <option value="@s.Id" >
+                            @s.Name
+                        </option>
+                    }
+               </select>
+
             </div>
             <div class="form-group">
-                <label asp-for="UserIdentityRoleClaim.ClaimType" class="control-label"></label>
-                <input asp-for="UserIdentityRoleClaim.ClaimType" class="form-control" />
-                <span asp-validation-for="UserIdentityRoleClaim.ClaimType" class="text-danger"></span>
+                <label asp-for="RoleClaim.ClaimType" class="control-label"></label>
+                <input asp-for="RoleClaim.ClaimType" class="form-control" />
+                <span asp-validation-for="RoleClaim.ClaimType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserIdentityRoleClaim.ClaimValue" class="control-label"></label>
-                <input asp-for="UserIdentityRoleClaim.ClaimValue" class="form-control" />
-                <span asp-validation-for="UserIdentityRoleClaim.ClaimValue" class="text-danger"></span>
+                <label asp-for="RoleClaim.ClaimValue" class="control-label"></label>
+                <input asp-for="RoleClaim.ClaimValue" class="form-control" />
+                <span asp-validation-for="RoleClaim.ClaimValue" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

@@ -1,0 +1,165 @@
+﻿@page
+@model OppeniddictServer.Pages.User.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>UserIdentity</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- User ID (Readonly) -->
+            <div class="form-group">
+                <label asp-for="UserIdentity.Id" class="control-label">User ID</label>
+                <input value="@Guid.NewGuid()" class="form-control" readonly />
+
+            </div>
+
+            <div class="form-group">
+                <label asp-for="UserIdentity.UserName" class="control-label"></label>
+                <input asp-for="UserIdentity.UserName" class="form-control" />
+                <span asp-validation-for="UserIdentity.UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserIdentity.Email" class="control-label"></label>
+                <input asp-for="UserIdentity.Email" class="form-control" />
+                <span asp-validation-for="UserIdentity.Email" class="text-danger"></span>
+            </div>
+  
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="UserIdentity.EmailConfirmed" /> @Html.DisplayNameFor(model => model.UserIdentity.EmailConfirmed)
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="UserIdentity.PhoneNumber" class="control-label"></label>
+                <input asp-for="UserIdentity.PhoneNumber" class="form-control" />
+                <span asp-validation-for="UserIdentity.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="UserIdentity.PhoneNumberConfirmed" /> @Html.DisplayNameFor(model => model.UserIdentity.PhoneNumberConfirmed)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="UserIdentity.TwoFactorEnabled" /> @Html.DisplayNameFor(model => model.UserIdentity.TwoFactorEnabled)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserIdentity.LockoutEnd" class="control-label"></label>
+                <input asp-for="UserIdentity.LockoutEnd" class="form-control" />
+                <span asp-validation-for="UserIdentity.LockoutEnd" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="UserIdentity.LockoutEnabled" /> @Html.DisplayNameFor(model => model.UserIdentity.LockoutEnabled)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserIdentity.AccessFailedCount" class="control-label"></label>
+                <input asp-for="UserIdentity.AccessFailedCount" class="form-control" />
+                <span asp-validation-for="UserIdentity.AccessFailedCount" class="text-danger"></span>
+            </div>
+            <!-- Roles Selection -->
+            <select asp-for="AssignedRoles" class="form-control" multiple id="AssignedRoles">
+                @foreach (var role in Model.AvailableRoles)
+                {
+                    <option value="@role.Name" selected="@(Model.AssignedRoles.Contains(role.Name) ? "selected" : null)">
+                        @role.Name
+                    </option>
+                }
+            </select>
+
+            <!-- Roles Based Claims Selection (Multiple) -->
+            <div class="form-group">
+                <label>Claims Based on the Roles</label>
+                <select asp-for="SelectedClaims" class="form-control" multiple id="selectedClaims">
+                    <!-- Claims will be populated dynamically based on selected roles -->
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+
+    @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script>
+                var roleClaims = @Html.Raw(Json.Serialize(Model.AvailableClaimsBasedOnRoles));
+                console.log("Role Claims Mapping:", roleClaims);
+
+                function updateClaimsDropdown() {
+                    var selectedRoles = $("#AssignedRoles").val(); // Get selected roles
+                    console.log("Selected Roles:", selectedRoles);
+
+                    var claims = [];
+                    selectedRoles.forEach(function(role) {
+                        if (roleClaims[role]) {
+                            claims = claims.concat(roleClaims[role]); // Add role's claims
+                        }
+                    });
+
+                    claims = [...new Set(claims)]; // Remove duplicate claims
+                    console.log("Claims:", claims);
+
+                    $("#selectedClaims").empty(); // Clear existing options
+                    claims.forEach(function(claim) {
+                        $("#selectedClaims").append('<option value="' + claim + '">' + claim + '</option>');
+                    });
+                }
+
+                $(document).ready(function() {
+                    console.log("Initializing claims dropdown...");
+                    updateClaimsDropdown();
+
+                    $("#AssignedRoles").on("change", function() {
+                        updateClaimsDropdown();
+                    });
+                });
+            </script>
+
+}
+@*  <script>
+        $(document).readY(function(){
+            GetClaimsByRoles();
+        })
+
+        $("#rolesId").change(function(){
+            GetClaimsByRoles()
+        });
+
+        var GetClaimsByRoles=function(){
+            $.ajax({
+            url:'@Url.Action("GetClaimsByRoles","Index")',
+            type:'Get',
+            data:{
+                rolesId:$('#rolesId').val(),
+            },
+            success: function(data){
+            $(data).forEach(
+                function(index,item){
+
+                }
+            )
+            })
+        }
+    </script>
+ *@

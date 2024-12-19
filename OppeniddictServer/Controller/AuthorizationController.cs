@@ -62,7 +62,7 @@ namespace OppeniddictServer.Controller
             var request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
 
-            //var result=await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            var result1 =await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var result = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
 
             var isAuthenticated=_authService.IsAuthenticated(result, request);

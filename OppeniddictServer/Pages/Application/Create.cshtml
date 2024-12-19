@@ -20,7 +20,7 @@
                 <select asp-for="SelectedScopes" class="form-control" multiple>
                     @foreach (var s in Model.AvailableScopes)
                     {
-                        <option value="@s.Id" selected="@(Model.SelectedScopes.Contains(s.Id) ? "selected" : null)">
+                        <option value="@s.Name" selected="@(Model.SelectedScopes.Contains(s.Name) ? "selected" : null)">
                             @s.Name
                         </option>
                     }

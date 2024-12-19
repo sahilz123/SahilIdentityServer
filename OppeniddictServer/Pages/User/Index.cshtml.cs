@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 
-namespace OppeniddictServer.Pages.RoleClaim
+namespace OppeniddictServer.Pages.User
 {
     public class IndexModel : PageModel
     {
@@ -19,13 +19,13 @@ namespace OppeniddictServer.Pages.RoleClaim
             _context = context;
         }
 
-        public IList<UserIdentityRoleClaim> UserIdentityRoleClaim { get;set; } = default!;
+        public IList<UserIdentity> UserIdentity { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.RoleClaims != null)
+            if (_context.Users != null)
             {
-                UserIdentityRoleClaim = await _context.RoleClaims.ToListAsync();
+                UserIdentity = await _context.Users.ToListAsync();
             }
         }
     }

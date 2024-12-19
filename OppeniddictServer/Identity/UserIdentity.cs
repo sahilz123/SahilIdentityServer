@@ -2,8 +2,8 @@
 
 namespace OppeniddictServer.Identity
 {
-	public class UserIdentity : IdentityUser
-	{
-		
-	}
+	public class UserIdentity : IdentityUser<string>
+    {
+        
+    }
 }

@@ -15,11 +15,11 @@ namespace OppeniddictServer.Pages
 
         private readonly UserManager<UserIdentity> _userManager;
 
-        [BindProperty]
-        public string? FirstName { get; set; }
+        //[BindProperty]
+        //public string? FirstName { get; set; }
 
-        [BindProperty]
-        public string? LastName { get; set; }
+        //[BindProperty]
+        //public string? LastName { get; set; }
         
         [BindProperty]
         public string Username { get; set; }
@@ -80,7 +80,7 @@ namespace OppeniddictServer.Pages
                 {
                    // await _scopeManager.CreateAsync(,Scope,);
 
-                    await _userManager.AddToRoleAsync(user, "Admin");  //assigning default user role
+                    await _userManager.AddToRoleAsync(user, "User");  //assigning default user role
 
                     return Redirect("/ServerLogin" + parameters);
                 }
