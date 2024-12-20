@@ -7,7 +7,7 @@
 
 <h1>Create</h1>
 
-<h4>UserIdentity</h4>
+<h4>User</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -23,12 +23,12 @@
 
             <div class="form-group">
                 <label asp-for="UserIdentity.UserName" class="control-label"></label>
-                <input asp-for="UserIdentity.UserName" class="form-control" />
+                <input asp-for="UserIdentity.UserName" class="form-control" required type="text"/>
                 <span asp-validation-for="UserIdentity.UserName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="UserIdentity.Email" class="control-label"></label>
-                <input asp-for="UserIdentity.Email" class="form-control" />
+                <input asp-for="UserIdentity.Email" class="form-control" type="email" required  />
                 <span asp-validation-for="UserIdentity.Email" class="text-danger"></span>
             </div>
   
@@ -40,7 +40,7 @@
             
             <div class="form-group">
                 <label asp-for="UserIdentity.PhoneNumber" class="control-label"></label>
-                <input asp-for="UserIdentity.PhoneNumber" class="form-control" />
+                <input asp-for="UserIdentity.PhoneNumber" class="form-control"  type="number" maxlength=10 required/>
                 <span asp-validation-for="UserIdentity.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
@@ -65,10 +65,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="UserIdentity.AccessFailedCount" class="control-label"></label>
-                <input asp-for="UserIdentity.AccessFailedCount" class="form-control" />
+                <input asp-for="UserIdentity.AccessFailedCount" class="form-control"  type="number" value=0 required />
                 <span asp-validation-for="UserIdentity.AccessFailedCount" class="text-danger"></span>
             </div>
+
             <!-- Roles Selection -->
+            <div class="form-group">
+                <label>Assign Roles</label>
             <select asp-for="AssignedRoles" class="form-control" multiple id="AssignedRoles">
                 @foreach (var role in Model.AvailableRoles)
                 {
@@ -77,6 +80,7 @@
                     </option>
                 }
             </select>
+            </div>
 
             <!-- Roles Based Claims Selection (Multiple) -->
             <div class="form-group">
@@ -85,6 +89,14 @@
                     <!-- Claims will be populated dynamically based on selected roles -->
                 </select>
             </div>
+
+            <!-- Other Claims Selection -->
+            <div class="form-group">
+                <label asp-for="UniqueClaims" class="control-label">Assign Unique Claims</label>
+                <input asp-for="UniqueClaims" class="form-control" type="text" placeholder="Enter Claims (comma-separated)" required/>
+                <span asp-validation-for="UniqueClaims" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -137,29 +149,3 @@
             </script>
 
 }
-@*  <script>
-        $(document).readY(function(){
-            GetClaimsByRoles();
-        })
-
-        $("#rolesId").change(function(){
-            GetClaimsByRoles()
-        });
-
-        var GetClaimsByRoles=function(){
-            $.ajax({
-            url:'@Url.Action("GetClaimsByRoles","Index")',
-            type:'Get',
-            data:{
-                rolesId:$('#rolesId').val(),
-            },
-            success: function(data){
-            $(data).forEach(
-                function(index,item){
-
-                }
-            )
-            })
-        }
-    </script>
- *@

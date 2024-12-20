@@ -20,7 +20,7 @@ namespace OppeniddictServer.Pages
 
         //[BindProperty]
         //public string? LastName { get; set; }
-        
+
         [BindProperty]
         public string Username { get; set; }
 
@@ -40,7 +40,7 @@ namespace OppeniddictServer.Pages
         public string? ReturnUrl { get; set; }
         public string? Scope { get; set; }
 
-        public ServerRegisterModel(UserManager<UserIdentity> userManager)                                  
+        public ServerRegisterModel(UserManager<UserIdentity> userManager)
         {
             _userManager = userManager;
         }
@@ -66,7 +66,7 @@ namespace OppeniddictServer.Pages
                     ModelState.AddModelError(string.Empty, "Email is already taken.");
                     return Page();
                 }
-                               
+
                 // Create the user
                 var user = new UserIdentity
                 {
@@ -74,18 +74,18 @@ namespace OppeniddictServer.Pages
                     Email = Email
                 };
 
-               var result= await _userManager.CreateAsync(user,Password);
+                var result = await _userManager.CreateAsync(user, Password);
 
                 if (result.Succeeded)
                 {
-                   // await _scopeManager.CreateAsync(,Scope,);
+                    // await _scopeManager.CreateAsync(,Scope,);
 
                     await _userManager.AddToRoleAsync(user, "User");  //assigning default user role
 
                     return Redirect("/ServerLogin" + parameters);
                 }
 
-                if(result.Errors.Any())
+                if (result.Errors.Any())
                 {
                     return Page();
                 }

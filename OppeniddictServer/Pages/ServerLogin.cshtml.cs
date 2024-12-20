@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Web;
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace OppeniddictServer.Pages
 {
@@ -37,99 +38,67 @@ namespace OppeniddictServer.Pages
 
         [BindProperty]
         public string? RememberMe { get; set; }
-        
+
         [BindProperty]
         public string? Status { get; set; }
 
         [BindProperty]
+        [ValidateNever]
         public string? Client_Id { get; set; } = "";
 
 
 
-        public async void OnGet()
+        public  void OnGet()
         {
-            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         public async Task<IActionResult> OnPost()
         {
-            if (ReturnUrl == null)
-            {
-                return await ServerLogin();
-            }
-                //var parameters = HttpContext.Request.QueryString;
-
-                //string client_id = "";
-                string queryString = ReturnUrl.Split('?')[1];
-                var queryParams = queryString.Split('&');
- 
-            foreach (var param in queryParams)
-            {
-                var keyValue = param.Split('=');
-                
-                if (keyValue[0]=="client_id")
-                {
-                    Client_Id = keyValue[1];
-                    break;
-                }
-
-            }
-
-            var clientExist = await _seeder.CheckClient(Client_Id!);
-            if (clientExist == null)
-            {
-                //AuthStatus = "Parameter Mismatched or Invalid";
-                return Page();
-            }
-
-            ModelState.Remove(nameof(Client_Id));
-
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            /*var user = await _userManager.FindByNameAsync(Email)
-                    ?? await _userManager.FindByEmailAsync(Email);
-            if (user == null)
+            if (ReturnUrl==null)
             {
-                //AuthStatus = "Cannot authenticate - No user found with above Credentials";
-                return Page();
+               return await ServerLogin();                                                //login to server directly
             }
+            else if(ReturnUrl is not null && ReturnUrl.Contains("client_id"))           //login via application && initialize client id
+            {
+                string queryString = ReturnUrl.Split('?')[1];
+                var queryParams = queryString.Split('&');
 
-            var roles = await _userManager.GetRolesAsync(user);
+                foreach (var param in queryParams)
+                {
+                    var keyValue = param.Split('=');
 
-            var claims = new List<Claim>
+                    if (keyValue[0] == "client_id")
                     {
-                        new (ClaimTypes.Email,Email),
-                        new (ClaimTypes.Name,user.NormalizedUserName),
-                        new (ClaimTypes.SerialNumber,user.Id!),
-                    };
+                        Client_Id = keyValue[1];
+                        break;
+                    }
 
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                }
 
+                var clientExist = await _seeder.CheckClient(Client_Id!);
+                if (clientExist == null)
+                {
+                    Status = "Parameter Mismatched or Invalid";
+                    return Page();
+                }
+
+                return await ServerLogin();
             }
 
-            var principal = new ClaimsPrincipal(
-                new List<ClaimsIdentity>
-            {
-                    new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme)
-            });
-
-            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);*/
-
-            await ServerLogin();
-            if (!string.IsNullOrEmpty(ReturnUrl))
-            {
-                return Redirect(ReturnUrl);
-            }
-            //AuthStatus = "Authentication-Success";
+            Status = "No client Id were there in the Return Url";
             return Page();
         }
 
+        /// <summary>
+        /// check Credentials,Get required roles, Set Claims in the HttpContext
+        /// Redirect to Server Dashboard or the Return Url
+        /// </summary>
+        /// <returns></returns>
         private async Task<IActionResult> ServerLogin()
         {
             var user = await _userManager.FindByNameAsync(Email)
@@ -162,7 +131,14 @@ namespace OppeniddictServer.Pages
             });
 
             await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
-            return Redirect("~/Index");
+            if (!string.IsNullOrEmpty(ReturnUrl))
+            {
+                return Redirect(ReturnUrl);
+            }
+            else
+            {
+                return Redirect("~/Index");
+            }
         }
     }
 }

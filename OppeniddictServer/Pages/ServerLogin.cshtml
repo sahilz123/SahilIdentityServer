@@ -40,13 +40,17 @@
                                     </div>
                                     <form method="post" class="user">
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user" id="Input_Email"
+                                            <input class="form-control form-control-user" id="Input_Email"
                                                    name="Email" aria-describedby="emailHelp" placeholder="Enter Email Address Or Username..." />
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" id="Input_Password"
                                                    name="Password" placeholder="Password" />
                                         </div>
+                                        @if (!string.IsNullOrEmpty(Model.Status))
+                                        {
+                                            <div class="message"> @Model.Status</div>
+                                        }
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <input type="checkbox" class="custom-control-input" id="Input_RememberMe" name="RememberMe" />
@@ -72,10 +76,7 @@
                                         <a class="small" href="ServerRegister">Create an Account!</a>
                                     </div>
 
-                                    @if (!string.IsNullOrEmpty(Model.Status))
-                                    {
-                                        <div class="message"> @Model.Status</div>
-                                    }
+                                   
                                 </div>
                             </div>
                         </div>

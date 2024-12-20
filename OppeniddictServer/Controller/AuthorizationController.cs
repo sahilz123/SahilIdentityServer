@@ -62,7 +62,7 @@ namespace OppeniddictServer.Controller
             var request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
 
-            var result1 =await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //var result1 =await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var result = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
 
             var isAuthenticated=_authService.IsAuthenticated(result, request);
@@ -98,7 +98,15 @@ namespace OppeniddictServer.Controller
 
             var roles = result.Principal.FindAll(ClaimTypes.Role)
                                         .Select(r => r.Value)
-                                        .ToImmutableArray();
+                                        .ToImmutableArray(); 
+            
+            //var ClaimsByUser = result.Principal.FindAll("ClaimsByUser")
+            //                            .Select(r => r.Value)
+            //                            .ToImmutableArray();
+            
+            //var Permission = result.Principal.FindAll("Permission")
+            //                            .Select(r => r.Value)
+            //                            .ToImmutableArray();
 
             var subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;
             var identity = new ClaimsIdentity(
@@ -157,6 +165,8 @@ namespace OppeniddictServer.Controller
             // Log the claims
             var claims = result.Principal!.Claims.ToList();
 
+            var result1 = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
+
             var email = result.Principal.GetClaim(Claims.Email);              
             var id = result.Principal.GetClaim(Claims.ClientId);               
                                                                                
@@ -204,7 +214,7 @@ namespace OppeniddictServer.Controller
                 authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
                 properties: new AuthenticationProperties
                 {
-                    RedirectUri = "http://localhost:3000/home"
+                    RedirectUri = "https://localhost:7000/"
                 });
         }
 

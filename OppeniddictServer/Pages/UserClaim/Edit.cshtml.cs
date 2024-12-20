@@ -7,38 +7,40 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Context;
-using OppeniddictServer.Identity;
+using OppeniddictServers.Identity;
 
-namespace OppeniddictServer.Pages.RoleClaim
+namespace OppeniddictServer.Pages.UserClaim
 {
     public class EditModel : PageModel
     {
-        private readonly AdminIdentityDbContext _context;
+        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
 
-        public EditModel(AdminIdentityDbContext context)
+        public EditModel(OppeniddictServer.Context.AdminIdentityDbContext context)
         {
             _context = context;
         }
 
         [BindProperty]
-        public UserIdentityRoleClaim UserIdentityRoleClaim { get; set; } = default!;
+        public UserIdentityUserClaim UserIdentityUserClaim { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(string? id)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.RoleClaims == null)
+            if (id == null || _context.UserClaims == null)
             {
                 return NotFound();
             }
 
-            var useridentityroleclaim =  await _context.RoleClaims.FirstOrDefaultAsync(m => m.RoleId == id);
-            if (useridentityroleclaim == null)
+            var useridentityuserclaim =  await _context.UserClaims.FirstOrDefaultAsync(m => m.Id == id);
+            if (useridentityuserclaim == null)
             {
                 return NotFound();
             }
-            UserIdentityRoleClaim = useridentityroleclaim;
+            UserIdentityUserClaim = useridentityuserclaim;
             return Page();
         }
 
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -46,7 +48,7 @@ namespace OppeniddictServer.Pages.RoleClaim
                 return Page();
             }
 
-            _context.Attach(UserIdentityRoleClaim).State = EntityState.Modified;
+            _context.Attach(UserIdentityUserClaim).State = EntityState.Modified;
 
             try
             {
@@ -54,7 +56,7 @@ namespace OppeniddictServer.Pages.RoleClaim
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserIdentityRoleClaimExists(UserIdentityRoleClaim.Id))
+                if (!UserIdentityUserClaimExists(UserIdentityUserClaim.Id))
                 {
                     return NotFound();
                 }
@@ -67,9 +69,9 @@ namespace OppeniddictServer.Pages.RoleClaim
             return RedirectToPage("./Index");
         }
 
-        private bool UserIdentityRoleClaimExists(int id)
+        private bool UserIdentityUserClaimExists(int id)
         {
-          return (_context.RoleClaims?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.UserClaims?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

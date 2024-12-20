@@ -10,7 +10,8 @@
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
-@if (User.Identity.IsAuthenticated)
+<div class="align-content-lg-center">
+@if (User.Identity!.IsAuthenticated)
 {
     <p>You are logged in as: @User.Identity.Name</p>
     <p>Here is your personalized dashboard content.</p>
@@ -19,3 +20,4 @@ else
 {
     <p>You are not authorized to view this content. Please <a href="~/ServerLogin">log in</a>.</p>
 }
+</div>

@@ -1,11 +1,11 @@
 ﻿@page
-@model OppeniddictServer.Pages.RoleClaim.IndexModel
+@model OppeniddictServer.Pages.UserClaim.IndexModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>User Claim Index</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
@@ -14,25 +14,26 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserIdentityRoleClaim[0].RoleId)
+                @Html.DisplayNameFor(model => model.UserIdentityUserClaim[0].Id)
+            </th><th>
+                @Html.DisplayNameFor(model => model.UserIdentityUserClaim[0].UserId)
+            </th><th>
+                @Html.DisplayNameFor(model => model.UserIdentityUserClaim[0].ClaimType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserIdentityRoleClaim[0].ClaimType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserIdentityRoleClaim[0].ClaimValue)
+                @Html.DisplayNameFor(model => model.UserIdentityUserClaim[0].ClaimValue)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.UserIdentityRoleClaim) {
+@foreach (var item in Model.UserIdentityUserClaim) {
         <tr>
-            
             <td>
-                @Html.DisplayFor(modelItem => item.RoleId)
-            </td>
-            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td> <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td> <td>
                 @Html.DisplayFor(modelItem => item.ClaimType)
             </td>
             <td>

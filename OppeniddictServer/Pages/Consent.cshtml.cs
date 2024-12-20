@@ -16,7 +16,7 @@ namespace OppeniddictServer.Pages
     public class ConsentModel : PageModel
     {
         [BindProperty]
-        public string?  ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }
         public IActionResult OnGet(string returnUrl)
         {
             ReturnUrl = returnUrl;
@@ -24,22 +24,22 @@ namespace OppeniddictServer.Pages
         }
 
 
-        public async Task<IActionResult> OnPostAsync(string grant) 
+        public async Task<IActionResult> OnPostAsync(string grant)
         {
             if (grant != Constants.Constants.GrantAccessValue)
             {
-               return Redirect("/Error");
+                return Redirect("/Error");
             }
 
-            var consentclaim=User.GetClaim(Constants.Constants.ConsentNaming);
+            var consentclaim = User.GetClaim(Constants.Constants.ConsentNaming);
 
-            if (string.IsNullOrEmpty(consentclaim) )
+            if (string.IsNullOrEmpty(consentclaim))
             {
                 User.SetClaim(Constants.Constants.ConsentNaming, grant);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, User);
                 await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, User);
-                
-            }            
+
+            }
 
             return Redirect(ReturnUrl!);
         }

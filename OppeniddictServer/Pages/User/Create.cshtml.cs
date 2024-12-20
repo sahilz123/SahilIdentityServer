@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.EntityFrameworkCore.Models;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 
@@ -29,7 +32,6 @@ namespace OppeniddictServer.Pages.User
 
         public IList<IdentityRole> AvailableRoles { get; set; } = new List<IdentityRole>();
         public Dictionary<string, List<string>> AvailableClaimsBasedOnRoles { get; set; } = new();
-
         public async Task<IActionResult> OnGet()
         {
             
@@ -57,27 +59,57 @@ namespace OppeniddictServer.Pages.User
         
         [BindProperty]
         public List<string> SelectedClaims { get; set; } =new List<string>();
+        
+        [BindProperty]
+        public string UniqueClaims { get; set; } =default!;
+
+        public List<string> UniqueClaimsList { get; set; } =new List<string>();
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var s = SelectedClaims;
-            var user = await _userManager.FindByNameAsync(UserIdentity.UserName)
-                    ?? await _userManager.FindByEmailAsync(UserIdentity.Email);
+            var s = SelectedClaims;         //claims selected by roles
+           
+            if (!string.IsNullOrWhiteSpace(UniqueClaims))
+            {
+                UniqueClaimsList = UniqueClaims.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                         .Select(word => word.Trim())
+                                         .ToList();
+            }
 
+            var u = UniqueClaimsList;   //claims of users other than the roles-claim
             UserIdentity.Id = Guid.NewGuid().ToString();
 
-            if (!ModelState.IsValid || user != null || UserIdentity == null)
+            if (!ModelState.IsValid ||  UserIdentity == null)
             {
+                
                 return Page();
             }
+            var user = await _userManager.FindByNameAsync(UserIdentity.UserName)
+                                ?? await _userManager.FindByEmailAsync(UserIdentity.Email);
+            if (user != null) return Page();
 
             var Password=UserIdentity.UserName+UserIdentity.Email;          //return to the user so that they can
                                                                             //logged in with the given password
+
+            var claims = new List<Claim>();
+
+            foreach (var p in SelectedClaims)
+            {
+               claims.Add( new Claim("Permission", p));
+            }
+            
+            foreach (var p in UniqueClaimsList)
+            {
+               claims.Add( new Claim("ClaimsByUser", p));
+            }
+                
+        
 
             var result = await _userManager.CreateAsync(UserIdentity, Password);
 
             if (result.Succeeded)
             {
+                await _userManager.AddClaimsAsync(UserIdentity,claims);
                 foreach (var role in AssignedRoles) { await _userManager.AddToRoleAsync(UserIdentity, role); }
 
                 return RedirectToPage("./Index");
@@ -85,10 +117,5 @@ namespace OppeniddictServer.Pages.User
             return Page();
         }
 
-
-        //public JsonResult GetClaimsByRoles(string rolesId)
-        //{
-        //    //return Json(AvailableClaimsBasedOnRoles.Where(u => u.Key == category).ToList());
-        //}
     }
 }

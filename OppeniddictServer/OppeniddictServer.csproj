@@ -39,7 +39,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\OpenIddict\" />
-    <Folder Include="Pages\Claim\" />
+    <Folder Include="Pages\Server\" />
   </ItemGroup>
 
 </Project>

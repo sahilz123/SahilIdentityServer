@@ -6,19 +6,21 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Applications Index</h1>
+<h1>Application Index</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+
+<div style="height:600px;overflow-y:scroll">
 
 <div style="overflow-x: auto; width: 100%;">
 
 <table class="table">
     <thead>
         <tr>
-            
-            <th>
+
+            <th style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                 @Html.DisplayNameFor(model => model.ApplicationManager[0].ClientId)
             </th>
             <th>
@@ -61,7 +63,7 @@
 @foreach (var item in Model.ApplicationManager) {
         <tr>
 
-            <td  style="max-width: 175px;">
+            <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                 @Html.DisplayFor(modelItem => item.ClientId)
             </td>
             <td class="text-truncate" style="max-width: 175px;">
@@ -109,4 +111,5 @@
 }
     </tbody>
 </table>
+</div>
 </div>

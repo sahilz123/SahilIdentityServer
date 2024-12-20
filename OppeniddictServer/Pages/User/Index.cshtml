@@ -5,17 +5,22 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>User Index</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+
+<div style="height:600px;overflow-y:scroll">
 
 <div style="overflow-x: auto; width: 100%;">
 
 <table class="table">
     <thead>
         <tr>
+            <th style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                 UserId    
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.UserIdentity[0].UserName)
             </th>
@@ -46,6 +51,9 @@
     <tbody>
 @foreach (var item in Model.UserIdentity) {
         <tr>
+            <td style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            @Html.DisplayFor(modelItem => item.Id)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UserName)
             </td>
@@ -81,4 +89,5 @@
 }
     </tbody>
 </table>
+</div>
 </div>
