@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace OppeniddictServer.Pages.Application
 {
-    [Authorize(Roles = "User,Admin")]
+    [Authorize(Roles = "SuperAdmin")]
     public class IndexModel : PageModel
     {
         private readonly OpenIddictDbContext _context;

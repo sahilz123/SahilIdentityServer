@@ -8,6 +8,7 @@ using OppeniddictServer.Context;
 using Microsoft.AspNetCore.Identity;
 using OppeniddictServer.Identity;
 using OppeniddictServer.Openiddict;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,13 +66,14 @@ builder.Services.AddOpenIddict()
     {        
         options.SetAuthorizationEndpointUris("/connect/authorize")
                .SetLogoutEndpointUris("/connect/logout")
-               .SetTokenEndpointUris("/connect/token");
+               .SetTokenEndpointUris("/connect/token")
+               ;
 
         options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles, Scopes.OfflineAccess);
 
         options.AllowAuthorizationCodeFlow()
                .AllowRefreshTokenFlow()
-               .SetAccessTokenLifetime(TimeSpan.FromMinutes(5))
+               .SetAccessTokenLifetime(TimeSpan.FromMinutes(10))
                .SetRefreshTokenLifetime(TimeSpan.FromMinutes(30));
 
         options.AddEncryptionKey(new SymmetricSecurityKey(
@@ -123,11 +125,14 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminPolicy", policy =>
+    options.AddPolicy("SuperAdminPolicy", policy =>
         policy.RequireRole("SuperAdmin"));
 });
 
-
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AuthorizeFilter());
+});
 
 var app = builder.Build();
 

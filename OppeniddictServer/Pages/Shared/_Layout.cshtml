@@ -53,7 +53,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            @if (User.IsInRole("Admin"))
+            @if (User.IsInRole("SuperAdmin") && User.Identity.IsAuthenticated)
             {
                 <!-- Heading Application -->
                 <div class="sidebar-heading">
@@ -235,10 +235,13 @@
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="~/ServerLogin">Login</a>
-                        <a class="collapse-item" href="~/ServerRegister">Register</a>
-                        <a class="collapse-item" href="~/forgot-password.html">Forgot Password</a>
+                        @if (User.Identity == null && !User.Identity.IsAuthenticated)
+                        {
+                            <h6 class="collapse-header">Login Screens:</h6>
+                            <a class="collapse-item" href="~/ServerLogin">Login</a>
+                            <a class="collapse-item" href="~/ServerRegister">Register</a>
+                            //<a class="collapse-item" href="~/forgot-password.html">Forgot Password</a>
+                        }
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Other Pages:</h6>
                         <a class="collapse-item" href="404.html">404 Page</a>

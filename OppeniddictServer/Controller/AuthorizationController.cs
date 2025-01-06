@@ -11,6 +11,8 @@ using System.Web;
 using System.Collections.Immutable;
 using OppeniddictServer.Constants;
 using Microsoft.AspNetCore.Identity;
+using OppeniddictServer.Identity;
+using Microsoft.AspNetCore.Authorization;
 namespace OppeniddictServer.Controller
 {
     [ApiController]
@@ -21,17 +23,23 @@ namespace OppeniddictServer.Controller
         private readonly IOpenIddictScopeManager _scopeManager;
         private readonly AuthService _authService;
 
+        private readonly UserManager<UserIdentity> _userManager;
+
 
         public AuthorizationController(
             IOpenIddictApplicationManager applicationManager,
             IOpenIddictAuthorizationManager authorizationManager,
-            IOpenIddictScopeManager scopeManager, AuthService authService)
+            IOpenIddictScopeManager scopeManager, 
+            AuthService authService,
+            UserManager<UserIdentity> userManager)
 
         {
             _applicationManager = applicationManager;
             _authorizationManager = authorizationManager;
             _scopeManager = scopeManager;
             _authService = authService;
+
+            _userManager = userManager;
         }
 
         ///// <summary>
@@ -98,15 +106,21 @@ namespace OppeniddictServer.Controller
 
             var roles = result.Principal.FindAll(ClaimTypes.Role)
                                         .Select(r => r.Value)
-                                        .ToImmutableArray(); 
-            
+                                        .ToImmutableArray();
+
             //var ClaimsByUser = result.Principal.FindAll("ClaimsByUser")
             //                            .Select(r => r.Value)
             //                            .ToImmutableArray();
-            
+
             //var Permission = result.Principal.FindAll("Permission")
             //                            .Select(r => r.Value)
             //                            .ToImmutableArray();
+
+            //var appUser = _signInManager.UserManager.Users.SingleOrDefault(r => r.Email == model.Email);
+            //var userClaims = await _signInManager.UserManager.GetClaimsAsync(appUser); // this is returning 0 claims
+            var user1 =await _userManager.FindByEmailAsync(email);
+            var claims =await _userManager.GetClaimsAsync(user1);
+
 
             var subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;
             var identity = new ClaimsIdentity(
@@ -118,6 +132,11 @@ namespace OppeniddictServer.Controller
                     .SetClaim(Claims.Email, email)
                     .SetClaims(Claims.Role, roles)
             ;
+
+            foreach(var c in claims)
+            {
+                identity.SetClaim(c.Type,c.Value);
+            }
             
 
             identity.SetScopes(request.GetScopes());
@@ -150,6 +169,7 @@ namespace OppeniddictServer.Controller
         }
 
         [HttpPost("~/connect/token")]
+        [AllowAnonymous]
         public async Task<IActionResult> Exchange()
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??
@@ -165,8 +185,7 @@ namespace OppeniddictServer.Controller
             // Log the claims
             var claims = result.Principal!.Claims.ToList();
 
-            var result1 = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
-
+            
             var email = result.Principal.GetClaim(Claims.Email);              
             var id = result.Principal.GetClaim(Claims.ClientId);               
                                                                                
@@ -192,11 +211,17 @@ namespace OppeniddictServer.Controller
 
             // Override the user claims present in the principal in case they
             // changed since the authorization code/refresh token was issued.
-            identity.SetClaim(Claims.Subject, email)
-                    .SetClaim(Claims.Email, email)
-                    .SetClaim(Claims.Name, email);
-                    
-        
+            //identity.SetClaim(Claims.Subject, email)
+            //        .SetClaim(Claims.Email, email)
+            //        .SetClaim(Claims.Name, email)
+            //        ;
+
+            //foreach (var c in claims)
+            //{
+            //    identity.SetClaim(c.Type, c.Value);
+            //}
+
+
 
             identity.SetDestinations(AuthService.GetDestination);
 

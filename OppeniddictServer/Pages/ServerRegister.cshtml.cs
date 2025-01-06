@@ -1,27 +1,22 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using OpenIddict.Abstractions;
 using OppeniddictServer.Identity;
-using OppeniddictServer.Model;
-using OppeniddictServer.Openiddict;
-using System.Data;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OppeniddictServer.Pages
 {
+    [AllowAnonymous]
     public class ServerRegisterModel : PageModel
     {
 
         private readonly UserManager<UserIdentity> _userManager;
 
-        //[BindProperty]
-        //public string? FirstName { get; set; }
-
-        //[BindProperty]
-        //public string? LastName { get; set; }
-
+       
         [BindProperty]
+        [DataType(DataType.Text)]
         public string Username { get; set; }
 
         [BindProperty]
@@ -32,9 +27,6 @@ namespace OppeniddictServer.Pages
 
         [BindProperty]
         public string ConfirmPassword { get; set; }
-
-        public List<UserIdentityRole> Roles { get; set; }
-
 
         [BindProperty]
         public string? ReturnUrl { get; set; }
@@ -67,9 +59,9 @@ namespace OppeniddictServer.Pages
                     return Page();
                 }
 
-                // Create the user
                 var user = new UserIdentity
                 {
+                    Id = Guid.NewGuid().ToString(),
                     UserName = Username,
                     Email = Email
                 };
@@ -78,8 +70,6 @@ namespace OppeniddictServer.Pages
 
                 if (result.Succeeded)
                 {
-                    // await _scopeManager.CreateAsync(,Scope,);
-
                     await _userManager.AddToRoleAsync(user, "User");  //assigning default user role
 
                     return Redirect("/ServerLogin" + parameters);

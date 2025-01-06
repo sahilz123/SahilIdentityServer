@@ -13,9 +13,9 @@ namespace OppeniddictServer.Pages.User
 {
     public class EditModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
 
-        public EditModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+        public EditModel(AdminIdentityDbContext context)
         {
             _context = context;
         }
@@ -39,8 +39,6 @@ namespace OppeniddictServer.Pages.User
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)

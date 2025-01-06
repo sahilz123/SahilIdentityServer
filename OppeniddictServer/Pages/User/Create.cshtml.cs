@@ -30,7 +30,9 @@ namespace OppeniddictServer.Pages.User
             _context = context;
         }
 
+        [BindProperty]
         public IList<IdentityRole> AvailableRoles { get; set; } = new List<IdentityRole>();
+        [BindProperty]
         public Dictionary<string, List<string>> AvailableClaimsBasedOnRoles { get; set; } = new();
         public async Task<IActionResult> OnGet()
         {
@@ -58,50 +60,49 @@ namespace OppeniddictServer.Pages.User
         public List<string> AssignedRoles { get; set; } =new List<string>();
         
         [BindProperty]
-        public List<string> SelectedClaims { get; set; } =new List<string>();
+        public List<string> SelectedClaims { get; set; } =new List<string>();       //all claims provided by the user
         
-        [BindProperty]
-        public string UniqueClaims { get; set; } =default!;
+        //[BindProperty]        
+        //public string UniqueClaims { get; set; } = default!;
 
-        public List<string> UniqueClaimsList { get; set; } =new List<string>();
+        //public List<string> UniqueClaimsList { get; set; } =new List<string>();
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var s = SelectedClaims;         //claims selected by roles
-           
-            if (!string.IsNullOrWhiteSpace(UniqueClaims))
+            if (!ModelState.IsValid || UserIdentity == null)
             {
-                UniqueClaimsList = UniqueClaims.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                                         .Select(word => word.Trim())
-                                         .ToList();
-            }
 
-            var u = UniqueClaimsList;   //claims of users other than the roles-claim
-            UserIdentity.Id = Guid.NewGuid().ToString();
-
-            if (!ModelState.IsValid ||  UserIdentity == null)
-            {
-                
                 return Page();
             }
+
+            //if (!string.IsNullOrWhiteSpace(UniqueClaims))
+            //{
+            //    UniqueClaimsList = UniqueClaims.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            //                             .Select(word => word.Trim())
+            //                             .ToList();
+            //}
+
+            UserIdentity.Id = Guid.NewGuid().ToString();
+
+            
             var user = await _userManager.FindByNameAsync(UserIdentity.UserName)
                                 ?? await _userManager.FindByEmailAsync(UserIdentity.Email);
             if (user != null) return Page();
 
-            var Password=UserIdentity.UserName+UserIdentity.Email;          //return to the user so that they can
-                                                                            //logged in with the given password
+            var Password=UserIdentity.UserName.ToUpper() + UserIdentity.Email;          //return to the user so that they can
+                                                                                        //logged in with the given password
 
             var claims = new List<Claim>();
 
             foreach (var p in SelectedClaims)
             {
-               claims.Add( new Claim("Permission", p));
-            }
-            
-            foreach (var p in UniqueClaimsList)
-            {
                claims.Add( new Claim("ClaimsByUser", p));
             }
+            
+            //foreach (var p in UniqueClaimsList)
+            //{
+            //   claims.Add( new Claim("ClaimsByUser", p));
+            //}
                 
         
 
@@ -109,8 +110,13 @@ namespace OppeniddictServer.Pages.User
 
             if (result.Succeeded)
             {
-                await _userManager.AddClaimsAsync(UserIdentity,claims);
+               var r= await _userManager.AddClaimsAsync(UserIdentity,claims);
+                var existingClaims = await _userManager.GetClaimsAsync(UserIdentity);
+
+
                 foreach (var role in AssignedRoles) { await _userManager.AddToRoleAsync(UserIdentity, role); }
+
+                await _userManager.UpdateAsync(UserIdentity);
 
                 return RedirectToPage("./Index");
             }

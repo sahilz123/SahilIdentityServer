@@ -11,33 +11,42 @@ using System.Web;
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace OppeniddictServer.Pages
 {
+    [AllowAnonymous]
     public class ServerLoginModel : PageModel
     {
         private readonly UserManager<UserIdentity> _userManager;
         private readonly ClientSeeder _seeder;
+        private readonly SignInManager<UserIdentity> _signInManager;
 
         public ServerLoginModel(UserManager<UserIdentity> userManager,
-                                //IServiceProvider serviceProvider,
-                                ClientSeeder seeder)
+                                ClientSeeder seeder,
+                                SignInManager<UserIdentity> signInManager)
         {
             _userManager = userManager;
             _seeder = seeder;
+            _signInManager = signInManager;
         }
 
         [BindProperty]
-        public string Email { get; set; }
+        [EmailAddress]
+        public string? Email { get; set; }
 
         [BindProperty]
-        public string Password { get; set; }
+        [DataType(DataType.Password)]
+        public string? Password { get; set; }
 
         [BindProperty]
         public string? ReturnUrl { get; set; }
 
         [BindProperty]
-        public string? RememberMe { get; set; }
+        public bool RememberMe { get; set; } 
 
         [BindProperty]
         public string? Status { get; set; }
@@ -55,15 +64,11 @@ namespace OppeniddictServer.Pages
         public async Task<IActionResult> OnPost()
         {
             if (!ModelState.IsValid)
-            {
+            {               
                 return Page();
             }
 
-            if (ReturnUrl==null)
-            {
-               return await ServerLogin();                                                //login to server directly
-            }
-            else if(ReturnUrl is not null && ReturnUrl.Contains("client_id"))           //login via application && initialize client id
+            if (ReturnUrl is not null && ReturnUrl.Contains("client_id"))           //login via application && initialize client id
             {
                 string queryString = ReturnUrl.Split('?')[1];
                 var queryParams = queryString.Split('&');
@@ -89,9 +94,12 @@ namespace OppeniddictServer.Pages
 
                 return await ServerLogin();
             }
+            else
+            {
+                return await ServerLogin();                                                //login to server directly
+            }
 
-            Status = "No client Id were there in the Return Url";
-            return Page();
+           
         }
 
         /// <summary>
@@ -113,7 +121,7 @@ namespace OppeniddictServer.Pages
 
             var claims = new List<Claim>
                     {
-                        new (ClaimTypes.Email,Email),
+                        new (ClaimTypes.Email,Email!),
                         new (ClaimTypes.Name,user.NormalizedUserName),
                         new (ClaimTypes.SerialNumber,user.Id!),
                     };
@@ -130,7 +138,21 @@ namespace OppeniddictServer.Pages
                     new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme)
             });
 
-            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+            //await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+            PasswordHasher<UserIdentity> _passwordHasher = new();
+            var isPasswordValid = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, Password);
+            if (isPasswordValid.ToString() == "Failed")
+            {
+                Status = "Password Mismatched";
+                return Page();
+            }
+
+            var response =await _signInManager.PasswordSignInAsync(user,Password,RememberMe,false);
+            if (!response.Succeeded)              
+            {
+                Status = "Invalid Credentials!!!";
+                return Page();
+            }
             if (!string.IsNullOrEmpty(ReturnUrl))
             {
                 return Redirect(ReturnUrl);

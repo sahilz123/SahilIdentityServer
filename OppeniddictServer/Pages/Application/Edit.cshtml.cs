@@ -13,7 +13,7 @@ using OppeniddictServer.Openiddict;
 
 namespace OppeniddictServer.Pages.Application
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "SuperAdmin")]
     public class EditModel : PageModel
     {
         private readonly OppeniddictServer.Context.OpenIddictDbContext _context;

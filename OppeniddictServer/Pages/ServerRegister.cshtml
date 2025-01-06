@@ -37,32 +37,31 @@
                                 <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                             </div>
                             <form method="post" class="user">
-                                @* <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user"
-                                               id="Input_FirstName" name="FirstName" placeholder="First Name" />
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user"
-                                               id="Input_LastName" name="LastName" placeholder="Last Name" />
-                                    </div>
-                                </div> *@
+                              
                                 <div class="form-group">
                                     <input type="text" class="form-control form-control-user"
                                            id="Input-Username" name="Username" placeholder="User Name" />
+                                    <span asp-validation-for="Username" class="text-danger"></span>
+
                                 </div>
                                 <div class="form-group">
                                     <input type="email" class="form-control form-control-user"
                                            id="Input_Email" name="Email" placeholder="Email Address" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="password" class="form-control form-control-user"
                                                id="Input_Password" name="Password" placeholder="Password" />
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="password" class="form-control form-control-user"
                                                id="Input_ConfirmPassword" name="ConfirmPassword" placeholder="Repeat Password" />
+                                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-user btn-block">

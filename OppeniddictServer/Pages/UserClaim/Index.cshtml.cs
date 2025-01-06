@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Context;
+using OppeniddictServer.Identity;
 using OppeniddictServers.Identity;
 
 namespace OppeniddictServer.Pages.UserClaim
 {
     public class IndexModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
+        private readonly UserManager<UserIdentity> _userManager;
 
-        public IndexModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+        public IndexModel(AdminIdentityDbContext context, UserManager<UserIdentity> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public IList<UserIdentityUserClaim> UserIdentityUserClaim { get;set; } = default!;
@@ -25,6 +29,7 @@ namespace OppeniddictServer.Pages.UserClaim
         {
             if (_context.UserClaims != null)
             {
+                
                 UserIdentityUserClaim = await _context.UserClaims.ToListAsync();
             }
         }

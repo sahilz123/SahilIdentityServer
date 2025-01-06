@@ -17,7 +17,6 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace OppeniddictServer.Pages.Application
 {
-    [Authorize(Roles ="Admin")]
     public class CreateModel : PageModel
     {
         private readonly OpenIddictDbContext _context;

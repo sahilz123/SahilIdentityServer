@@ -1,43 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OppeniddictServer.Context;
+using OppeniddictServer.Identity;
 using OppeniddictServers.Identity;
 
 namespace OppeniddictServer.Pages.UserClaim
 {
     public class CreateModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly UserManager<UserIdentity> _userManager;
 
-        public CreateModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+
+        public CreateModel(UserManager<UserIdentity> userManager)
         {
-            _context = context;
+            _userManager = userManager;
         }
 
-        public IActionResult OnGet()
+        [BindProperty]
+        public List<UserIdentity> UserAvailable { get; set; } = default!;
+
+        [BindProperty]
+        public string SelectedUser { get; set; } = default!;
+
+        
+        public async Task<IActionResult> OnGet()
         {
+            UserAvailable = _userManager.Users.ToList();
+            SelectedUser = UserAvailable.FirstOrDefault()!.Id!;
+
             return Page();
         }
 
         [BindProperty]
         public UserIdentityUserClaim UserIdentityUserClaim { get; set; } = default!;
         
-
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.UserClaims == null || UserIdentityUserClaim == null)
+          if (!ModelState.IsValid ||  UserIdentityUserClaim == null)
             {
                 return Page();
             }
+           
+            Claim cl=new(UserIdentityUserClaim.ClaimType, UserIdentityUserClaim.ClaimValue);
 
-            _context.UserClaims.Add(UserIdentityUserClaim);
-            await _context.SaveChangesAsync();
+            var user = _userManager.Users.FirstOrDefault(x=>x.Id==SelectedUser);
+            if (user!=null)
+            { await _userManager.AddClaimAsync(user, cl); }
+            else
+            {
+                return BadRequest();
+            }
 
             return RedirectToPage("./Index");
         }

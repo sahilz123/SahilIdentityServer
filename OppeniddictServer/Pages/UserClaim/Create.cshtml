@@ -14,8 +14,16 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="UserIdentityUserClaim.UserId" class="control-label"></label>
-                <select asp-for="UserIdentityUserClaim.UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
+                <label asp-for="SelectedUser" class="control-label">Select User</label>
+                <select asp-for="SelectedUser" class="form-control" id="selecteduser">
+                    @foreach (var user in Model.UserAvailable)
+                    {
+                        <option value="@user.Id"
+                                selected="@(Model.SelectedUser == user.Id ? "selected" : null)">
+                            @user.UserName (@user.Id)
+                        </option>
+                    }
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="UserIdentityUserClaim.ClaimType" class="control-label"></label>
@@ -39,5 +47,5 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}   
 }

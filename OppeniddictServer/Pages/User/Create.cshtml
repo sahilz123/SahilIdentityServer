@@ -40,7 +40,7 @@
             
             <div class="form-group">
                 <label asp-for="UserIdentity.PhoneNumber" class="control-label"></label>
-                <input asp-for="UserIdentity.PhoneNumber" class="form-control"  type="number" maxlength=10 required/>
+                <input asp-for="UserIdentity.PhoneNumber" class="form-control"  type="number" maxlength=10 />
                 <span asp-validation-for="UserIdentity.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
@@ -72,30 +72,44 @@
             <!-- Roles Selection -->
             <div class="form-group">
                 <label>Assign Roles</label>
-            <select asp-for="AssignedRoles" class="form-control" multiple id="AssignedRoles">
-                @foreach (var role in Model.AvailableRoles)
-                {
-                    <option value="@role.Name" selected="@(Model.AssignedRoles.Contains(role.Name) ? "selected" : null)">
-                        @role.Name
-                    </option>
-                }
-            </select>
-            </div>
-
-            <!-- Roles Based Claims Selection (Multiple) -->
-            <div class="form-group">
-                <label>Claims Based on the Roles</label>
-                <select asp-for="SelectedClaims" class="form-control" multiple id="selectedClaims">
-                    <!-- Claims will be populated dynamically based on selected roles -->
+                <select asp-for="AssignedRoles" class="form-control" multiple id="AssignedRoles">
+                    @foreach (var role in Model.AvailableRoles)
+                    {
+                        <option value="@role.Name" selected="@(Model.AssignedRoles.Contains(role.Name) ? "selected" : null)">
+                            @role.Name
+                        </option>
+                    }
                 </select>
             </div>
+                       
 
             <!-- Other Claims Selection -->
             <div class="form-group">
-                <label asp-for="UniqueClaims" class="control-label">Assign Unique Claims</label>
-                <input asp-for="UniqueClaims" class="form-control" type="text" placeholder="Enter Claims (comma-separated)" required/>
-                <span asp-validation-for="UniqueClaims" class="text-danger"></span>
+               
+                <div class="form-group">
+                    <label class="control-label"> Add Custom Claim</label>
+                    <input  id="customClaimInput" class="form-control" placeholder="Enter custom claim"
+                           pattern="^[a-zA-Z0-9_]+$" minlength=3 maxlength=20 />
+                </div>
+                <small class="form-text text-muted">
+                    Claim must be 3-20 characters long and can only contain letters, numbers, and underscores.
+                    
+                </small>
+                <div>
+                    <button id="addClaimButton" class="btn btn-primary" type="button">Add Claim</button>
+                </div>
+
             </div>
+
+            <!-- Roles Based Claims Selection (Multiple)/ all claims selected -->
+            <div class="form-group">
+                <label asp-for="SelectedClaims" class="control-label">Claims Selected </label>
+                <select asp-for="SelectedClaims" class="form-control" multiple id="selectedClaims" disabled>
+                    <!-- Claims will be populated dynamically based on selected roles -->
+                </select>
+
+            </div>
+            <div id="hiddenSelectedClaimsContainer"></div>
 
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -115,12 +129,50 @@
 
             <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
             <script>
-                var roleClaims = @Html.Raw(Json.Serialize(Model.AvailableClaimsBasedOnRoles));
-                console.log("Role Claims Mapping:", roleClaims);
 
-                function updateClaimsDropdown() {
+            function addCustomClaim() 
+            {
+                var customClaim = $("#customClaimInput").val().trim(); // Get user-inputted claim
+                if (customClaim) 
+                {
+                    // Check if the claim is already in the dropdown
+                    var existingClaims = [];
+                    $("#selectedClaims option").each(function() {
+                        existingClaims.push($(this).val());
+                    });
+
+                    if (!existingClaims.includes(customClaim)) 
+                    {
+                        // Add new claim
+                        $("#selectedClaims").append('<option value="' + customClaim + '">' + customClaim + '</option>');
+                    } else {
+                        alert("This claim is already in the list.");
+                    }
+                    updateSelectedClaims(customClaim);
+                    // Clear the input field
+                    $("#customClaimInput").val('');
+                } else {
+                    alert("Please enter a valid claim.");
+            }
+            }
+
+            function updateSelectedClaims(customClaim) {
+            // Get the current number of custom claims already added
+            var currentCount = $("#hiddenSelectedClaimsContainer input").length;
+
+            console.log(currentCount);
+            // Append the new custom claim with an incremented index
+            $("#hiddenSelectedClaimsContainer").append(
+                '<input type="hidden" name="SelectedClaims[' + currentCount + ']" value="' + customClaim + '" />'
+            );
+        }
+            
+
+                var roleClaims = @Html.Raw(Json.Serialize(Model.AvailableClaimsBasedOnRoles));
+
+                function updateClaimsDropdown() 
+                {
                     var selectedRoles = $("#AssignedRoles").val(); // Get selected roles
-                    console.log("Selected Roles:", selectedRoles);
 
                     var claims = [];
                     selectedRoles.forEach(function(role) {
@@ -130,20 +182,22 @@
                     });
 
                     claims = [...new Set(claims)]; // Remove duplicate claims
-                    console.log("Claims:", claims);
 
                     $("#selectedClaims").empty(); // Clear existing options
                     claims.forEach(function(claim) {
                         $("#selectedClaims").append('<option value="' + claim + '">' + claim + '</option>');
                     });
-                }
+            }
 
                 $(document).ready(function() {
-                    console.log("Initializing claims dropdown...");
                     updateClaimsDropdown();
 
                     $("#AssignedRoles").on("change", function() {
                         updateClaimsDropdown();
+                    });
+
+                    $("#addClaimButton").on("click", function() {
+                    addCustomClaim();
                     });
                 });
             </script>
