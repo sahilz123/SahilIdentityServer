@@ -9,6 +9,64 @@
 
 <h4>User</h4>
 <hr />
+<style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        width: 200px;
+    }
+
+    .dropdown-list {
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        max-height: 150px;
+        overflow-y: auto;
+        width: 100%;
+        display: none; /* Initially hidden */
+        z-index: 1000;
+    }
+
+        .dropdown-list div {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+            .dropdown-list div:hover {
+                background-color: #f0f0f0;
+            }
+
+    .selected-items {
+        display: flex;
+        flex-wrap: wrap;
+        border: 1px solid #ccc;
+        padding: 5px;
+        min-height: 30px;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .selected-items span {
+            background-color: #e0e0e0;
+            padding: 5px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .selected-items span button {
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                font-size: 12px;
+            }
+
+    #searchInput {
+        width: 100%;
+        box-sizing: border-box;
+    }
+</style>
 <div class="row">
     <div class="col-md-4">
         <form method="post">
@@ -70,7 +128,7 @@
             </div>
 
             <!-- Roles Selection -->
-            <div class="form-group">
+            @* <div class="form-group">
                 <label>Assign Roles</label>
                 <select asp-for="AssignedRoles" class="form-control" multiple id="AssignedRoles">
                     @foreach (var role in Model.AvailableRoles)
@@ -80,8 +138,17 @@
                         </option>
                     }
                 </select>
+            </div> *@
+            
+            
+            <!-- Roles Selection with search feature -->
+            
+            <div class="dropdown">
+                <label for="searchInput">Select Roles:</label>
+                <input type="text" id="searchInput" placeholder="Type to search..." oninput="filterItems()" />
+                <div class="dropdown-list" id="dropdownList"></div>
             </div>
-                       
+            <div class="selected-items" id="selectedRoles"></div>
 
             <!-- Other Claims Selection -->
             <div class="form-group">
@@ -170,29 +237,136 @@
 
                 var roleClaims = @Html.Raw(Json.Serialize(Model.AvailableClaimsBasedOnRoles));
 
-                function updateClaimsDropdown() 
-                {
-                    var selectedRoles = $("#AssignedRoles").val(); // Get selected roles
+            function updateClaimsDropdown() 
+            {
+                //var selectedRoles = $("#selectedRoles").val(); Get selected roles                //chng
+                //console.log("selectedrole claims::"+ selectedRoles);
+                
+             var selectedRoles = [];
+                $("#selectedRoles span").each(function () {
+                    selectedRoles.push($(this).text().trim()); // Extract text and trim whitespace
+                });
 
-                    var claims = [];
-                    selectedRoles.forEach(function(role) {
-                        if (roleClaims[role]) {
-                            claims = claims.concat(roleClaims[role]); // Add role's claims
-                        }
-                    });
+                console.log("Selected roles:", selectedRoles);
 
-                    claims = [...new Set(claims)]; // Remove duplicate claims
+                var claims = [];
+                selectedRoles.forEach(function(role) {
+                    if (roleClaims[role]) {
+                        claims = claims.concat(roleClaims[role]); // Add role's claims
+                    }
+                });
+                console.log("selected claim:"+claims);
 
-                    $("#selectedClaims").empty(); // Clear existing options
-                    claims.forEach(function(claim) {
-                        $("#selectedClaims").append('<option value="' + claim + '">' + claim + '</option>');
-                    });
+                claims = [...new Set(claims)]; // Remove duplicate claims
+
+                $("#selectedClaims").empty(); // Clear existing options
+                claims.forEach(function(claim) {
+                    $("#selectedClaims").append('<option value="' + claim + '">' + claim + '</option>');
+                });
             }
 
-                $(document).ready(function() {
+                
+        var items = @Html.Raw(Json.Serialize(Model.AvailableRolesNames));        
+        console.log(items);
+
+          const selectedItems = [];
+
+        function filterItems() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const dropdownList = document.getElementById("dropdownList");
+
+            console.log(input);
+
+            dropdownList.innerHTML = "";
+
+            // Show dropdown only if there's input
+            if (input) {
+                const filteredItems = items.filter(item =>
+                    item.toLowerCase().includes(input) && !selectedItems.includes(item)
+                );
+                            console.log(filteredItems);
+
+
+                // Populate dropdown
+                filteredItems.forEach(item => {
+                    const div = document.createElement("div");
+                    div.textContent = item;
+                    div.onclick = () => {
+                        addItem(item);
+                        dropdownList.style.display = "none"; // Hide dropdown after selection
+                        document.getElementById("searchInput").value = ""; // Clear input
+                    };
+                    dropdownList.appendChild(div);
+                });
+
+                dropdownList.style.display = filteredItems.length > 0 ? "block" : "";
+            } else {
+                dropdownList.style.display = "";
+            }
+        }
+
+        function addItem(item) {
+            if (!selectedItems.includes(item)) {
+                selectedItems.push(item);
+
+                // Update UI
+                const selectedItemsDiv = document.getElementById("selectedRoles");
+                const itemContainer = document.createElement("div"); // Create a container for item and button
+                const span = document.createElement("span");
+                span.textContent = item;
+
+
+                // Add a remove button
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.textContent = "x";
+                removeBtn.onclick = () => {
+                    removeItem(item,itemContainer);
+                };
+
+                itemContainer.appendChild(span); // Append the item name
+                itemContainer.appendChild(removeBtn);
+
+                //span.appendChild(removeBtn);
+                selectedItemsDiv.appendChild(itemContainer);
+
+               updateClaimsDropdown();
+
+            }
+        }
+
+        function removeItem(item,itemContainer) {
+            // Remove item from selectedItems array
+            const index = selectedItems.indexOf(item);
+            if (index > -1) {
+                selectedItems.splice(index, 1);
+            }
+
+                // Update UI: Remove the item container from the list
+        itemContainer.remove();
+            // const selectedItemsDiv = document.getElementById("selectedRoles");
+            // const spans = selectedItemsDiv.querySelectorAll("span");
+            // spans.forEach(span => {
+            //     if (span.textContent.includes(item)) {
+            //         selectedItemsDiv.remove(span);
+            //     }
+            // });
+
+            updateClaimsDropdown();
+        }
+
+        // Hide dropdown when clicking outside
+        document.addEventListener("click", (event) => {
+            const dropdown = document.querySelector(".dropdown");
+            if (!dropdown.contains(event.target)) {
+                document.getElementById("dropdownList").style.display = "";
+            }
+        });
+
+        $(document).ready(function() {
                     updateClaimsDropdown();
 
-                    $("#AssignedRoles").on("change", function() {
+                    $("#selectedRoles").on("change", function() {
                         updateClaimsDropdown();
                     });
 
@@ -200,6 +374,7 @@
                     addCustomClaim();
                     });
                 });
-            </script>
+
+    </script>
 
 }

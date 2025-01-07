@@ -121,7 +121,7 @@ namespace OppeniddictServer.ClientManager
                     },
                     Requirements =
                     {
-                        Requirements.Features.ProofKeyForCodeExchange
+                        //Requirements.Features.ProofKeyForCodeExchange
                     }
                 });
 

@@ -30,8 +30,12 @@ namespace OppeniddictServer.Pages.User
             _context = context;
         }
 
+        //[BindProperty]
+        //public IList<IdentityRole> AvailableRoles { get; set; } = new List<IdentityRole>();
+        
         [BindProperty]
-        public IList<IdentityRole> AvailableRoles { get; set; } = new List<IdentityRole>();
+        public List<string> AvailableRolesNames { get; set; } = new List<string>();
+        
         [BindProperty]
         public Dictionary<string, List<string>> AvailableClaimsBasedOnRoles { get; set; } = new();
         public async Task<IActionResult> OnGet()
@@ -41,7 +45,8 @@ namespace OppeniddictServer.Pages.User
 
             foreach (var roles in rolesAvailable)
             {
-                AvailableRoles.Add(roles);
+                //AvailableRoles.Add(roles);
+                AvailableRolesNames.Add(roles.Name);
 
                 var claims = await _roleManager.GetClaimsAsync(roles);
 
@@ -58,6 +63,9 @@ namespace OppeniddictServer.Pages.User
         
         [BindProperty]
         public List<string> AssignedRoles { get; set; } =new List<string>();
+        
+        [BindProperty]
+        public List<string> AssignedRolesWithSearch { get; set; } =new List<string>();
         
         [BindProperty]
         public List<string> SelectedClaims { get; set; } =new List<string>();       //all claims provided by the user
