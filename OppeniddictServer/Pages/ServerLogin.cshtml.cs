@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,14 +6,10 @@ using OppeniddictServer.ClientManager;
 using OppeniddictServer.Identity;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
-using System.Web;
-using System;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using OppeniddictServer.Constants;
+using Microsoft.VisualBasic;
 
 namespace OppeniddictServer.Pages
 {
@@ -53,7 +48,7 @@ namespace OppeniddictServer.Pages
 
         [BindProperty]
         [ValidateNever]
-        public string? Client_Id { get; set; } = "";
+        public string? Client_Id { get; set; } = default!;
 
 
 
@@ -73,22 +68,26 @@ namespace OppeniddictServer.Pages
                 string queryString = ReturnUrl.Split('?')[1];
                 var queryParams = queryString.Split('&');
 
-                foreach (var param in queryParams)
-                {
-                    var keyValue = param.Split('=');
+                Client_Id = queryParams
+                .Select(param => param.Split('='))
+                .FirstOrDefault(keyValue => keyValue[0] == "client_id")?[1];
 
-                    if (keyValue[0] == "client_id")
-                    {
-                        Client_Id = keyValue[1];
-                        break;
-                    }
+                //foreach (var param in queryParams)
+                //{
+                //    var keyValue = param.Split('=');
 
-                }
+                //    if (keyValue[0] == "client_id")
+                //    {
+                //        Client_Id = keyValue[1];
+                //        break;
+                //    }
 
-                var clientExist = await _seeder.CheckClient(Client_Id!);
+                //}
+
+                var clientExist = await _seeder.CheckClient(Client_Id!);        //must check that Client must exist before going ahead
                 if (clientExist == null)
                 {
-                    Status = "Parameter Mismatched or Invalid";
+                    Status = Error.ParameterError;
                     return Page();
                 }
 
@@ -113,7 +112,7 @@ namespace OppeniddictServer.Pages
                         ?? await _userManager.FindByEmailAsync(Email);
             if (user == null)
             {
-                Status = "Cannot authenticate - No user found with above Credentials";
+                Status = Error.AuthenticateError;
                 return Page();
             }
 
@@ -125,7 +124,6 @@ namespace OppeniddictServer.Pages
                         new (ClaimTypes.Name,user.NormalizedUserName),
                         new (ClaimTypes.SerialNumber,user.Id!),
                     };
-
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -135,22 +133,22 @@ namespace OppeniddictServer.Pages
             var principal = new ClaimsPrincipal(
                 new List<ClaimsIdentity>
             {
-                    new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme)
+                    new (claims,CookieAuthenticationDefaults.AuthenticationScheme)
             });
 
             //await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
             PasswordHasher<UserIdentity> _passwordHasher = new();
             var isPasswordValid = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, Password);
-            if (isPasswordValid.ToString() == "Failed")
+            if (isPasswordValid.ToString() == Error.StatusFailed)
             {
-                Status = "Password Mismatched";
+                Status = Error.PasswordMismatched;
                 return Page();
             }
 
             var response =await _signInManager.PasswordSignInAsync(user,Password,RememberMe,false);
             if (!response.Succeeded)              
             {
-                Status = "Invalid Credentials!!!";
+                Status = Error.InvalidCredential;
                 return Page();
             }
             if (!string.IsNullOrEmpty(ReturnUrl))
@@ -159,7 +157,7 @@ namespace OppeniddictServer.Pages
             }
             else
             {
-                return Redirect("~/Index");
+                return Redirect(Urls.Index);
             }
         }
     }

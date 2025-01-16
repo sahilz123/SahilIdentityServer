@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.EntityFrameworkCore.Models;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Openiddict;
 
@@ -14,9 +15,9 @@ namespace OppeniddictServer.Pages.Tokens
 {
     public class EditModel : PageModel
     {
-        private readonly OppeniddictServer.Context.OpenIddictDbContext _context;
+        private readonly OpenIddictDbContext _context;
 
-        public EditModel(OppeniddictServer.Context.OpenIddictDbContext context)
+        public EditModel(OpenIddictDbContext context)
         {
             _context = context;
         }
@@ -40,8 +41,6 @@ namespace OppeniddictServer.Pages.Tokens
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -57,7 +56,7 @@ namespace OppeniddictServer.Pages.Tokens
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TokenManagerExists(TokenManager.Id))
+                if (!TokenManagerExists(TokenManager.Id!))
                 {
                     return NotFound();
                 }
@@ -67,7 +66,7 @@ namespace OppeniddictServer.Pages.Tokens
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
 
         private bool TokenManagerExists(string id)

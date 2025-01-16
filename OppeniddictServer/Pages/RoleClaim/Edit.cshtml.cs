@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 
@@ -64,7 +65,7 @@ namespace OppeniddictServer.Pages.RoleClaim
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
 
         private bool UserIdentityRoleClaimExists(int id)

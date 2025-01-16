@@ -10,6 +10,8 @@ using OppeniddictServer.Identity;
 using OppeniddictServer.Openiddict;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
+KeyManagementService keyManagementService = new();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -80,20 +82,21 @@ builder.Services.AddOpenIddict()
            Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
 
         options.AddDevelopmentEncryptionCertificate()
-               .AddDevelopmentSigningCertificate();
+               .AddDevelopmentSigningCertificate();               
 
         options.UseAspNetCore()
                .EnableLogoutEndpointPassthrough()
                .EnableAuthorizationEndpointPassthrough()               
                .EnableTokenEndpointPassthrough();
 
-        options.DisableAccessTokenEncryption();
+        //options.DisableAccessTokenEncryption();
     })
     .AddValidation(options =>
     {
         options.UseLocalServer();
         options.UseAspNetCore();
     });
+
 
 // Configure cookie authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -139,6 +142,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<ClientSeeder>();
+    //var keyManager = scope.ServiceProvider.GetRequiredService<KeyManagementService>();
+
+    //keyManager.GetClientEncryptionKey();
     //seeder.AddClients().GetAwaiter().GetResult();
     //seeder.AddScopes().GetAwaiter().GetResult();
 }

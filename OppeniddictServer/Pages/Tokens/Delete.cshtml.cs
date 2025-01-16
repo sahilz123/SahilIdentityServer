@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.EntityFrameworkCore.Models;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Openiddict;
 
@@ -13,9 +14,9 @@ namespace OppeniddictServer.Pages.Tokens
 {
     public class DeleteModel : PageModel
     {
-        private readonly OppeniddictServer.Context.OpenIddictDbContext _context;
+        private readonly OpenIddictDbContext _context;
 
-        public DeleteModel(OppeniddictServer.Context.OpenIddictDbContext context)
+        public DeleteModel(OpenIddictDbContext context)
         {
             _context = context;
         }
@@ -58,7 +59,7 @@ namespace OppeniddictServer.Pages.Tokens
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
     }
 }

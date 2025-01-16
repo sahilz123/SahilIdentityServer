@@ -1,12 +1,9 @@
 ﻿using OpenIddict.Abstractions;
 using OpenIddict.Core;
 using OpenIddict.EntityFrameworkCore.Models;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
-using OppeniddictServer.Model;
-using Polly;
-using System;
-using System.Collections.Generic;
-using System.Net;
+using OppeniddictServer.Pages.Application;
 using System.Text;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using static OppeniddictServer.Pages.Scope.CreateModel;
@@ -21,7 +18,7 @@ namespace OppeniddictServer.ClientManager
             _serviceProvider = serviceProvider;
         }
 
-        public async Task AddScopes(ScopeInputModel scopeInput = null)
+        public async Task<string> AddScopes(ScopeInputModel scopeInput = null!)
         {
             await using var scope = _serviceProvider.CreateAsyncScope();
            // var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
@@ -41,9 +38,9 @@ namespace OppeniddictServer.ClientManager
                 Name = scopeInput.Name,
             };
 
-            if (scopeInput.Resources?.Count > 0)
+            if (scopeInput.ResourcesList?.Count > 0)
             {
-                foreach (var resource in scopeInput.Resources)
+                foreach (var resource in scopeInput.ResourcesList)
                 {
                     scopeDescriptor.Resources.Add(resource);
                 }
@@ -51,22 +48,15 @@ namespace OppeniddictServer.ClientManager
 
             await manager.CreateAsync(scopeDescriptor);
 
-
-            //    await manager.CreateAsync(new OpenIddictScopeDescriptor
-            //{
-            //    DisplayName = "API Scope",    
-            //    Name = "api1",
-            //    Resources ={
-            //        "resource_server_1"
-            //        }
-            //});
+            return $"Scope Created {scopeInput.Name}";
+           
         }
 
         public async Task<string> AddClients(RegisterInput newClient)
         {
             StringBuilder scopestring =new("");
 
-            foreach(var x in newClient.Scopes)
+            foreach(var x in newClient.Scopes!)
             {
                 scopestring.Append(x+" ");
             }
@@ -78,27 +68,24 @@ namespace OppeniddictServer.ClientManager
             var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
 
-            var client = await manager.FindByClientIdAsync(newClient.ClientId.ToString()!);
+            var client = await manager.FindByClientIdAsync(newClient.ClientId!.ToString()!);
 
             if (client != null)
             {
-                return "Client Already Exist";
+                return Constant.ClientAlreadyExist;
                 //await manager.DeleteAsync(client);
             }
             else
-            {                
-                await manager.CreateAsync(new OpenIddictApplicationDescriptor
+            {
+                var descriptor = new OpenIddictApplicationDescriptor
                 {
-                    
+
                     ClientSecret = Guid.NewGuid().ToString(),
                     ClientId = newClient.ClientId.ToString(),
                     ConsentType = ConsentTypes.Explicit,
                     DisplayName = newClient.DisplayName,
-                    RedirectUris = 
-                    {
-                       new Uri(newClient.RedirectUris!.Trim())
-                    },
-                 Permissions =
+                   
+                    Permissions =
                     {
                         Permissions.Endpoints.Authorization,
                         Permissions.Endpoints.Logout,
@@ -123,7 +110,15 @@ namespace OppeniddictServer.ClientManager
                     {
                         //Requirements.Features.ProofKeyForCodeExchange
                     }
-                });
+                };
+
+                foreach (var uri in newClient.RedirectUris!.Where(uri => !string.IsNullOrWhiteSpace(uri)))
+                {
+                    descriptor.RedirectUris.Add(new Uri(uri.Trim()));
+                }
+
+
+                await manager.CreateAsync(descriptor);
 
                 return $"Client Created {newClient.ClientId}";
             }

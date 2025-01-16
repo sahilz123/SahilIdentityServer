@@ -68,7 +68,7 @@ namespace OppeniddictServer.Controller
         
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??
-                throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
+                throw new InvalidOperationException(Error.OpenIdException);
 
             //var result1 =await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var result = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
@@ -88,49 +88,39 @@ namespace OppeniddictServer.Controller
             }
 
             var application = await _applicationManager.FindByClientIdAsync(request.ClientId!) ??
-                throw new InvalidOperationException("Details concerning the calling client application cannot be found.");
+                throw new InvalidOperationException(Error.ClientNotFound);
 
-            var consentclaim = result.Principal!.GetClaim(Constants.Constants.ConsentNaming);
+            var consentclaim = result.Principal!.GetClaim(Constants.Constant.ConsentNaming);
 
-            if (consentclaim != Constants.Constants.GrantAccessValue)
+            if (consentclaim != Constant.GrantAccessValue)
             {
                 var returnUrl = HttpUtility.UrlEncode(_authService.BuilderRediect(HttpContext.Request, parameters));
-                var consentRedirectUrl = $"/Consent?returnUrl={returnUrl}";
+                var consentRedirectUrl =Urls.ConsentWithReturnUrl+returnUrl;
 
                 return Redirect(consentRedirectUrl);
             }
-            
-
 
             var email = result.Principal!.FindFirst(ClaimTypes.Email)!.Value;
 
-            var roles = result.Principal.FindAll(ClaimTypes.Role)
+            var user = await _userManager.FindByEmailAsync(email);
+            var claims = await _userManager.GetClaimsAsync(user);
+
+
+            var roles = result.Principal.FindAll(ClaimTypes.Role)       //have roleclaims binded within it
                                         .Select(r => r.Value)
-                                        .ToImmutableArray();
-
-            //var ClaimsByUser = result.Principal.FindAll("ClaimsByUser")
-            //                            .Select(r => r.Value)
-            //                            .ToImmutableArray();
-
-            //var Permission = result.Principal.FindAll("Permission")
-            //                            .Select(r => r.Value)
-            //                            .ToImmutableArray();
-
-            //var appUser = _signInManager.UserManager.Users.SingleOrDefault(r => r.Email == model.Email);
-            //var userClaims = await _signInManager.UserManager.GetClaimsAsync(appUser); // this is returning 0 claims
-            var user1 =await _userManager.FindByEmailAsync(email);
-            var claims =await _userManager.GetClaimsAsync(user1);
-
-
-            var subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;
+                                        .ToImmutableArray();               
+                     
+           
+            string _subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;
             var identity = new ClaimsIdentity(
             authenticationType: TokenValidationParameters.DefaultAuthenticationType,
             nameType: Claims.Name,
             roleType: Claims.Role);
 
-            identity.SetClaim(Claims.Subject, subject)
+            identity.SetClaim(Claims.Subject, _subject)
                     .SetClaim(Claims.Email, email)
                     .SetClaims(Claims.Role, roles)
+                    .SetClaim(Claims.PreferredUsername, user.UserName)
             ;
 
             foreach(var c in claims)
@@ -143,10 +133,11 @@ namespace OppeniddictServer.Controller
 
             identity.SetResources(await _scopeManager.ListResourcesAsync(identity.GetScopes()).ToListAsync());
 
+            string _client= await _applicationManager.GetIdAsync(application)?? throw new NullReferenceException();
              var authorizations = await _authorizationManager
                 .FindAsync(   
-                subject: subject,
-                client: await _applicationManager.GetIdAsync(application),
+                subject: _subject,
+                client: _client,
                 status:Statuses.Valid,
                 type: AuthorizationTypes.Permanent,
                 scopes: identity.GetScopes()).ToListAsync();
@@ -155,15 +146,14 @@ namespace OppeniddictServer.Controller
 
             authorization ??= await _authorizationManager.CreateAsync(
                 identity: identity,
-                subject: subject,
-                client: await _applicationManager.GetIdAsync(application), 
+                subject: _subject,
+                client: _client, 
                 type: AuthorizationTypes.Permanent,
                 scopes: identity.GetScopes()) ;
 
             identity.SetAuthorizationId(await _authorizationManager.GetIdAsync(authorization));
             identity.SetDestinations(AuthService.GetDestination);
 
-            // Returning a SignInResult will ask OpenIddict to issue the appropriate access/identity tokens.
             return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             
         }
@@ -173,19 +163,17 @@ namespace OppeniddictServer.Controller
         public async Task<IActionResult> Exchange()
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??
-                throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
+                throw new InvalidOperationException(Error.OpenIdException);
 
             if (!request.IsAuthorizationCodeGrantType() && !request.IsRefreshTokenGrantType())
-                throw new InvalidOperationException("The specified grant type is not supported.");
+                throw new InvalidOperationException(Error.GrantTypeError);
             
             // Retrieve the claims principal stored in the authorization code/refresh token.
             var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             var application = await _applicationManager.FindByClientIdAsync(request.ClientId!);
 
-            // Log the claims
             var claims = result.Principal!.Claims.ToList();
-
-            
+                        
             var email = result.Principal.GetClaim(Claims.Email);              
             var id = result.Principal.GetClaim(Claims.ClientId);               
                                                                                
@@ -200,7 +188,7 @@ namespace OppeniddictServer.Controller
                         properties: new AuthenticationProperties(new Dictionary<string, string?>
                         {
                             [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
-                            [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The token is no longer valid."
+                            [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = Error.TokenInvalid
                         }));
                 }         
 
@@ -239,7 +227,7 @@ namespace OppeniddictServer.Controller
                 authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
                 properties: new AuthenticationProperties
                 {
-                    RedirectUri = "https://localhost:7000/"
+                    RedirectUri = Urls.Home
                 });
         }
 

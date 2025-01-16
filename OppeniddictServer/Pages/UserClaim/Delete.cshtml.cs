@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServers.Identity;
 
@@ -12,9 +13,9 @@ namespace OppeniddictServer.Pages.UserClaim
 {
     public class DeleteModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
 
-        public DeleteModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+        public DeleteModel(AdminIdentityDbContext context)
         {
             _context = context;
         }
@@ -57,7 +58,7 @@ namespace OppeniddictServer.Pages.UserClaim
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
     }
 }

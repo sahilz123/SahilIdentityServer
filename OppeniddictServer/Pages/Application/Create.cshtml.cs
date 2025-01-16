@@ -1,33 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer.Localisation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.DependencyInjection;
-using OpenIddict.Abstractions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using OpenIddict.EntityFrameworkCore.Models;
 using OppeniddictServer.ClientManager;
-using OppeniddictServer.Context;
-using OppeniddictServer.Model;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Openiddict;
-using static OpenIddict.Abstractions.OpenIddictConstants;
+using System.ComponentModel.DataAnnotations;
 
 namespace OppeniddictServer.Pages.Application
 {
     public class CreateModel : PageModel
     {
-        private readonly OpenIddictDbContext _context;
         private readonly ClientSeeder _seeder;
         private readonly ScopesManager _scope;
+        private readonly AuthService _authService;
 
-        public CreateModel(OpenIddictDbContext context,ClientSeeder seeder, ScopesManager scope)
+        public CreateModel(ClientSeeder seeder, ScopesManager scope, AuthService authService)
         {
-            _context = context;
             _seeder = seeder;
             _scope = scope;
+            _authService = authService;
         }
 
         public async Task<IActionResult> OnGet()
@@ -38,35 +31,44 @@ namespace OppeniddictServer.Pages.Application
         }
 
         [BindProperty]
-        public ApplicationManager ApplicationManager { get; set; } = default!;
+        public RegisterInput Client { get; set; } = default!;
         
         [BindProperty]
         public IList<OpenIddictEntityFrameworkCoreScope> AvailableScopes { get; set; } = default!;
 
         [BindProperty]
+        [Required]
         public List<string> SelectedScopes { get; set; } = new List<string>();
-
 
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.ApplicationManager == null || ApplicationManager == null)
+          if (!ModelState.IsValid ||  Client == null)
             {
                 return Page();
             }
+            Client.Scopes = SelectedScopes;
+            Client.RedirectUris= _authService.PopulateStringToList(Client.RedirectUris![0],Client.RedirectUris);
+            Client.Permissions= _authService.PopulateStringToList(Client.Permissions![0],Client.Permissions);
+            Client.PostLogoutRedirectUris= _authService.PopulateStringToList(Client.PostLogoutRedirectUris![0], Client.PostLogoutRedirectUris);
+            await _seeder.AddClients(Client);
 
-            var registerInput = new RegisterInput()
-            {
-                ClientId = ApplicationManager.ClientId,
-                DisplayName = ApplicationManager.DisplayName,
-                RedirectUris = ApplicationManager.RedirectUris,
-                Permissions = ApplicationManager.Permissions,
-                Scopes = SelectedScopes
-            };
-            var seedclient= _seeder.AddClients(registerInput).GetAwaiter().GetResult();
-
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
     }
+    public class RegisterInput
+    {
+        public string? ClientId { get; set; }
+        public string? ClientType { get; set; }
+        public string? ConsentType { get; set; }
+        public string? DisplayName { get; set; }
+        public string? Properties { get; set; }
+        public List<string>? RedirectUris { get; set; } 
+        public List<string>? Permissions { get; set; } 
+        public List<string>? Scopes { get; set; } 
+        public List<string>? PostLogoutRedirectUris { get; set; } 
 
-    
+       
+    }
+
+
 }

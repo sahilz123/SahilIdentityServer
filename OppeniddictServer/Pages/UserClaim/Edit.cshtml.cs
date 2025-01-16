@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 using OppeniddictServers.Identity;
@@ -31,7 +32,7 @@ namespace OppeniddictServer.Pages.UserClaim
         [BindProperty]
         public UserIdentity UserIdentity { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public  IActionResult OnGet(int? id)
         {            
             var useridentityuserclaim = _context.UserClaims.FirstOrDefault(m => m.Id == id);
 
@@ -75,7 +76,7 @@ namespace OppeniddictServer.Pages.UserClaim
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
 
         private bool UserIdentityUserClaimExists(int id)

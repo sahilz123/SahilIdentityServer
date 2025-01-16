@@ -23,9 +23,9 @@ namespace OppeniddictServer
             var url = request.PathBase + request.Path + QueryString.Create(parameters);
             return url;
         }
-        public IDictionary<string,StringValues> ParseOAuthParameters(HttpContext httpContext,List<string?> excluding =null)
+        public IDictionary<string,StringValues> ParseOAuthParameters(HttpContext httpContext,List<string?> excluding =null!)
         {
-            excluding ??= new List<string>();
+            excluding ??= new List<string>()!;
             var parameters = httpContext.Request.HasFormContentType ?
 
                 httpContext.Request.Form.Where(parameter => !excluding.Contains(parameter.Key))
@@ -54,6 +54,24 @@ namespace OppeniddictServer
             }
                 return true;
             
+        }
+
+        public List<string> PopulateStringToList(string res, List<string> ResourcesList)
+        {
+            if (!string.IsNullOrEmpty(res))
+            {
+                ResourcesList.Clear();
+                ResourcesList = res
+                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(item => item.Trim())
+                    .ToList();
+            }
+            else
+            {
+                ResourcesList.Clear();
+            }
+
+            return ResourcesList;
         }
     }
 }

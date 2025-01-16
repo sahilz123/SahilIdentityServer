@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Data;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
-using OpenIddict.EntityFrameworkCore.Models;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 
@@ -30,8 +24,6 @@ namespace OppeniddictServer.Pages.User
             _context = context;
         }
 
-        //[BindProperty]
-        //public IList<IdentityRole> AvailableRoles { get; set; } = new List<IdentityRole>();
         
         [BindProperty]
         public List<string> AvailableRolesNames { get; set; } = new List<string>();
@@ -69,11 +61,6 @@ namespace OppeniddictServer.Pages.User
         
         [BindProperty]
         public List<string> SelectedClaims { get; set; } =new List<string>();       //all claims provided by the user
-        
-        //[BindProperty]        
-        //public string UniqueClaims { get; set; } = default!;
-
-        //public List<string> UniqueClaimsList { get; set; } =new List<string>();
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -82,13 +69,6 @@ namespace OppeniddictServer.Pages.User
 
                 return Page();
             }
-
-            //if (!string.IsNullOrWhiteSpace(UniqueClaims))
-            //{
-            //    UniqueClaimsList = UniqueClaims.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-            //                             .Select(word => word.Trim())
-            //                             .ToList();
-            //}
 
             UserIdentity.Id = Guid.NewGuid().ToString();
 
@@ -104,16 +84,9 @@ namespace OppeniddictServer.Pages.User
 
             foreach (var p in SelectedClaims)
             {
-               claims.Add( new Claim("ClaimsByUser", p));
+               claims.Add( new Claim(Constant.ClaimsByUser, p));
             }
-            
-            //foreach (var p in UniqueClaimsList)
-            //{
-            //   claims.Add( new Claim("ClaimsByUser", p));
-            //}
-                
-        
-
+          
             var result = await _userManager.CreateAsync(UserIdentity, Password);
 
             if (result.Succeeded)
@@ -126,7 +99,7 @@ namespace OppeniddictServer.Pages.User
 
                 await _userManager.UpdateAsync(UserIdentity);
 
-                return RedirectToPage("./Index");
+                return RedirectToPage(Urls.Index);
             }
             return Page();
         }

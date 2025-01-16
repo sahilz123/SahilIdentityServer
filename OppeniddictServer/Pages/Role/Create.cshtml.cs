@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 
 namespace OppeniddictServer.Pages.Role
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = Roles.User)]
     public class CreateModel : PageModel
     {
         private readonly AdminIdentityDbContext _context;
@@ -40,7 +41,7 @@ namespace OppeniddictServer.Pages.Role
             _context.Roles.Add(UserIdentityRole);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
     }
 }

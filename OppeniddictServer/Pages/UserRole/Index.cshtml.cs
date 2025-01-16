@@ -28,8 +28,8 @@ namespace OppeniddictServer.Pages.UserRole
         public List<UserRoleViewModel> UserRolesData { get; set; } = new List<UserRoleViewModel>();
 
         public IList<UserIdentityUserRole> UserIdentityUserRole { get;set; } = default!;
-        public UserIdentity IdentityUser { get;set; } 
-        public UserIdentityRole IdentityRole { get;set; }
+        public UserIdentity IdentityUser { get;set; } =default!;
+        public UserIdentityRole IdentityRole { get; set; } = default!;
 
 
         public async Task OnGetAsync()
@@ -58,10 +58,10 @@ namespace OppeniddictServer.Pages.UserRole
 
         public class UserRoleViewModel
         {
-            public string Id { get; set; }
-            public string Email { get; set; }
-            public string UserName { get; set; }
-            public string RoleName { get; set; }
+            public string? Id { get; set; }
+            public string? Email { get; set; }
+            public string? UserName { get; set; }
+            public string? RoleName { get; set; }
         }
     }
 }

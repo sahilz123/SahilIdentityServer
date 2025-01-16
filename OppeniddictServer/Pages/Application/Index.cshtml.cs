@@ -5,10 +5,11 @@ using OppeniddictServer.Context;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.EntityFrameworkCore.Models;
 using Microsoft.AspNetCore.Authorization;
+using OppeniddictServer.Constants;
 
 namespace OppeniddictServer.Pages.Application
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = Roles.SuperAdmin)]
     public class IndexModel : PageModel
     {
         private readonly OpenIddictDbContext _context;

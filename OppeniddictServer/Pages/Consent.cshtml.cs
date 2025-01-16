@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OpenIddict.Abstractions;
-using System;
-using System.Diagnostics.Eventing.Reader;
+using OppeniddictServer.Constants;
 using System.Web;
-using static System.Net.WebRequestMethods;
 
 namespace OppeniddictServer.Pages
 {
@@ -26,16 +24,16 @@ namespace OppeniddictServer.Pages
 
         public async Task<IActionResult> OnPostAsync(string grant)
         {
-            if (grant != Constants.Constants.GrantAccessValue)
+            if (grant != Constants.Constant.GrantAccessValue)
             {
-                return Redirect("/Error");
+                return Redirect(Urls.Error);
             }
 
-            var consentclaim = User.GetClaim(Constants.Constants.ConsentNaming);
+            var consentclaim = User.GetClaim(Constants.Constant.ConsentNaming);
 
             if (string.IsNullOrEmpty(consentclaim))
             {
-                User.SetClaim(Constants.Constants.ConsentNaming, grant);
+                User.SetClaim(Constants.Constant.ConsentNaming, grant);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, User);
                 await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, User);
 

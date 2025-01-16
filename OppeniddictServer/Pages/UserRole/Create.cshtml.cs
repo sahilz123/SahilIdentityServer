@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 
@@ -12,9 +13,9 @@ namespace OppeniddictServer.Pages.UserRole
 {
     public class CreateModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
 
-        public CreateModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+        public CreateModel(AdminIdentityDbContext context)
         {
             _context = context;
         }
@@ -27,8 +28,6 @@ namespace OppeniddictServer.Pages.UserRole
         [BindProperty]
         public UserIdentityUserRole UserIdentityUserRole { get; set; } = default!;
 
-
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
           if (!ModelState.IsValid || _context.UserRoles == null || UserIdentityUserRole == null)
@@ -39,7 +38,7 @@ namespace OppeniddictServer.Pages.UserRole
             _context.UserRoles.Add(UserIdentityUserRole);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
     }
 }

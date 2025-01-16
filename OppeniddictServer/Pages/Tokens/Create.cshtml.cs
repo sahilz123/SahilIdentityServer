@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Openiddict;
 
@@ -12,9 +13,9 @@ namespace OppeniddictServer.Pages.Tokens
 {
     public class CreateModel : PageModel
     {
-        private readonly OppeniddictServer.Context.OpenIddictDbContext _context;
+        private readonly OpenIddictDbContext _context;
 
-        public CreateModel(OppeniddictServer.Context.OpenIddictDbContext context)
+        public CreateModel(OpenIddictDbContext context)
         {
             _context = context;
         }
@@ -28,7 +29,6 @@ namespace OppeniddictServer.Pages.Tokens
         public TokenManager TokenManager { get; set; } = default!;
         
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
           if (!ModelState.IsValid || _context.TokenManager == null || TokenManager == null)
@@ -39,7 +39,7 @@ namespace OppeniddictServer.Pages.Tokens
             _context.TokenManager.Add(TokenManager);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
     }
 }

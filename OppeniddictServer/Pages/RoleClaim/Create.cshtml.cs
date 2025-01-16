@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 
@@ -33,10 +34,10 @@ namespace OppeniddictServer.Pages.RoleClaim
         public IList<UserIdentityRole> Role { get; set; } = default!;
 
         [BindProperty]
-        public string SelectedRoleId { get; set; }
-        
+        public string SelectedRoleId { get; set; }=default!;
+
         [BindProperty]
-        public UserIdentityRole SelectedRole { get; set; }
+        public UserIdentityRole SelectedRole { get; set; } = default!;
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -57,7 +58,7 @@ namespace OppeniddictServer.Pages.RoleClaim
 
                 await _roleManager.AddClaimAsync(SelectedRole!, claim);
 
-                return RedirectToPage("./Index");
+                return RedirectToPage(Urls.Index);
             }
             return Page();
         }

@@ -154,10 +154,16 @@
             <div class="form-group">
                
                 <div class="form-group">
-                    <label class="control-label"> Add Custom Claim</label>
-                    <input  id="customClaimInput" class="form-control" placeholder="Enter custom claim"
-                           pattern="^[a-zA-Z0-9_]+$" minlength=3 maxlength=20 />
+                    <label class="control-label">Add Custom Claim</label>
+                    <input id="customClaimInput"
+                           class="form-control"
+                           type="text"
+                           placeholder="Enter custom claim"
+                           pattern="^[a-zA-Z0-9_]+$"
+                           minlength="3"
+                           maxlength="20" />
                 </div>
+
                 <small class="form-text text-muted">
                     Claim must be 3-20 characters long and can only contain letters, numbers, and underscores.
                     
@@ -168,7 +174,6 @@
 
             </div>
 
-            <!-- Roles Based Claims Selection (Multiple)/ all claims selected -->
             <div class="form-group">
                 <label asp-for="SelectedClaims" class="control-label">Claims Selected </label>
                 <select asp-for="SelectedClaims" class="form-control" multiple id="selectedClaims" disabled>
@@ -191,10 +196,9 @@
 
 
     @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-
-            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
             <script>
 
             function addCustomClaim() 
@@ -202,7 +206,6 @@
                 var customClaim = $("#customClaimInput").val().trim(); // Get user-inputted claim
                 if (customClaim) 
                 {
-                    // Check if the claim is already in the dropdown
                     var existingClaims = [];
                     $("#selectedClaims option").each(function() {
                         existingClaims.push($(this).val());
@@ -224,11 +227,7 @@
             }
 
             function updateSelectedClaims(customClaim) {
-            // Get the current number of custom claims already added
             var currentCount = $("#hiddenSelectedClaimsContainer input").length;
-
-            console.log(currentCount);
-            // Append the new custom claim with an incremented index
             $("#hiddenSelectedClaimsContainer").append(
                 '<input type="hidden" name="SelectedClaims[' + currentCount + ']" value="' + customClaim + '" />'
             );
@@ -239,24 +238,17 @@
 
             function updateClaimsDropdown() 
             {
-                //var selectedRoles = $("#selectedRoles").val(); Get selected roles                //chng
-                //console.log("selectedrole claims::"+ selectedRoles);
                 
              var selectedRoles = [];
                 $("#selectedRoles span").each(function () {
                     selectedRoles.push($(this).text().trim()); // Extract text and trim whitespace
                 });
-
-                console.log("Selected roles:", selectedRoles);
-
                 var claims = [];
                 selectedRoles.forEach(function(role) {
                     if (roleClaims[role]) {
                         claims = claims.concat(roleClaims[role]); // Add role's claims
                     }
                 });
-                console.log("selected claim:"+claims);
-
                 claims = [...new Set(claims)]; // Remove duplicate claims
 
                 $("#selectedClaims").empty(); // Clear existing options
@@ -267,16 +259,11 @@
 
                 
         var items = @Html.Raw(Json.Serialize(Model.AvailableRolesNames));        
-        console.log(items);
-
           const selectedItems = [];
 
         function filterItems() {
             const input = document.getElementById("searchInput").value.toLowerCase();
             const dropdownList = document.getElementById("dropdownList");
-
-            console.log(input);
-
             dropdownList.innerHTML = "";
 
             // Show dropdown only if there's input
@@ -284,8 +271,6 @@
                 const filteredItems = items.filter(item =>
                     item.toLowerCase().includes(input) && !selectedItems.includes(item)
                 );
-                            console.log(filteredItems);
-
 
                 // Populate dropdown
                 filteredItems.forEach(item => {
@@ -344,14 +329,7 @@
 
                 // Update UI: Remove the item container from the list
         itemContainer.remove();
-            // const selectedItemsDiv = document.getElementById("selectedRoles");
-            // const spans = selectedItemsDiv.querySelectorAll("span");
-            // spans.forEach(span => {
-            //     if (span.textContent.includes(item)) {
-            //         selectedItemsDiv.remove(span);
-            //     }
-            // });
-
+            
             updateClaimsDropdown();
         }
 

@@ -5,6 +5,7 @@ using OpenIddict.Abstractions;
 using OpenIddict.Core;
 using OpenIddict.EntityFrameworkCore;
 using OpenIddict.EntityFrameworkCore.Models;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using System.Xml.Linq;
 using static OppeniddictServer.Pages.Scope.CreateModel;
@@ -36,11 +37,11 @@ namespace OppeniddictServer.Openiddict
             }
 
             var apiscope = await _manager.FindByNameAsync(scope.Name!);
-
+            
             if (apiscope != null)
             {
                 //await _manager.DeleteAsync(apiscope);
-                return "Scope Already Existed";
+                return Constant.ScopeAlreadyExist;
             }
             var scopeDescriptor = new OpenIddictScopeDescriptor
             {
@@ -49,16 +50,16 @@ namespace OppeniddictServer.Openiddict
                 Name = scope.Name ,
             };
 
-            if (scope.Resources?.Count > 0)
+            if (scope.ResourcesList?.Count > 0)
             {
-                foreach (var resource in scope.Resources)
+                foreach (var resource in scope.ResourcesList)
                 {
                     scopeDescriptor.Resources.Add(resource);
                 }
             }
 
             await _manager.CreateAsync(scopeDescriptor);
-            return "Scope Created";
+            return Constant.ScopeCreated;
         }
 
         public async Task<List<OpenIddictEntityFrameworkCoreScope>> GetAvailableScopes()

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 
@@ -39,8 +40,6 @@ namespace OppeniddictServer.Pages.Role
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -66,7 +65,7 @@ namespace OppeniddictServer.Pages.Role
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
 
         private bool UserIdentityRoleExists(string id)

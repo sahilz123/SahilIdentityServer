@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
 using OppeniddictServers.Identity;
@@ -30,7 +31,7 @@ namespace OppeniddictServer.Pages.UserClaim
         public string SelectedUser { get; set; } = default!;
 
         
-        public async Task<IActionResult> OnGet()
+        public IActionResult OnGet()
         {
             UserAvailable = _userManager.Users.ToList();
             SelectedUser = UserAvailable.FirstOrDefault()!.Id!;
@@ -58,7 +59,7 @@ namespace OppeniddictServer.Pages.UserClaim
                 return BadRequest();
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
     }
 }

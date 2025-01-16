@@ -14,63 +14,63 @@
         <form method="post">
             
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <!-- Scopes Selection (Multiple) -->
             <div class="form-group">
                 <label>Scope Of the Project</label>
-                <select asp-for="SelectedScopes" class="form-control" multiple>
+                <select asp-for="SelectedScopes" class="form-control" multiple required>
                     @foreach (var s in Model.AvailableScopes)
                     {
-                        <option value="@s.Name" selected="@(Model.SelectedScopes.Contains(s.Name) ? "selected" : null)">
+                        <option value="@s.Name" selected="@(Model.SelectedScopes.Contains(s.Name!) ? "selected" : null)">
                             @s.Name
                         </option>
                     }
                 </select>
+                <span asp-validation-for="SelectedScopes" class="text-danger"></span>
             </div>
             <div>
                 <a asp-page="/Scope/Create">Create Your Own Scopes/Resources</a>
             </div>
             <div class="form-group">
-                <label asp-for="ApplicationManager.ClientId" class="control-label"></label>
-                <input asp-for="ApplicationManager.ClientId" class="form-control" />
-                <span asp-validation-for="ApplicationManager.ClientId" class="text-danger"></span>
+                <label asp-for="Client.ClientId" class="control-label"></label>
+                <input asp-for="Client.ClientId" class="form-control" required/>
+                <span asp-validation-for="Client.ClientId" class="text-danger"></span>
             </div>
            
             <div class="form-group">
-                <label asp-for="ApplicationManager.ClientType" class="control-label"></label>
-                <input asp-for="ApplicationManager.ClientType" class="form-control" />
-                <span asp-validation-for="ApplicationManager.ClientType" class="text-danger"></span>
+                <label asp-for="Client.ClientType" class="control-label"></label>
+                <input asp-for="Client.ClientType" class="form-control" required/>
+                <span asp-validation-for="Client.ClientType" class="text-danger"></span>
             </div>
            
             <div class="form-group">
-                <label asp-for="ApplicationManager.ConsentType" class="control-label"></label>
-                <input asp-for="ApplicationManager.ConsentType" class="form-control" />
-                <span asp-validation-for="ApplicationManager.ConsentType" class="text-danger"></span>
+                <label asp-for="Client.ConsentType" class="control-label"></label>
+                <input asp-for="Client.ConsentType" class="form-control" required/>
+                <span asp-validation-for="Client.ConsentType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ApplicationManager.DisplayName" class="control-label"></label>
-                <input asp-for="ApplicationManager.DisplayName" class="form-control" />
-                <span asp-validation-for="ApplicationManager.DisplayName" class="text-danger"></span>
+                <label asp-for="Client.DisplayName" class="control-label"></label>
+                <input asp-for="Client.DisplayName" class="form-control" required/>
+                <span asp-validation-for="Client.DisplayName" class="text-danger"></span>
             </div>
            
             <div class="form-group">
-                <label asp-for="ApplicationManager.Permissions" class="control-label"></label>
-                <input asp-for="ApplicationManager.Permissions" class="form-control" />
-                <span asp-validation-for="ApplicationManager.Permissions" class="text-danger"></span>
+                <label asp-for="Client.Permissions" class="control-label"></label>
+                <input asp-for="Client.Permissions" class="form-control" />
+                <span asp-validation-for="Client.Permissions" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ApplicationManager.PostLogoutRedirectUris" class="control-label"></label>
-                <input asp-for="ApplicationManager.PostLogoutRedirectUris" class="form-control" />
-                <span asp-validation-for="ApplicationManager.PostLogoutRedirectUris" class="text-danger"></span>
+                <label asp-for="Client.PostLogoutRedirectUris" class="control-label"></label>
+                <input asp-for="Client.PostLogoutRedirectUris" placeholder="Enter Valid URL seperated with Comma(,)"  class="form-control" />
+                <span asp-validation-for="Client.PostLogoutRedirectUris" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ApplicationManager.Properties" class="control-label"></label>
-                <input asp-for="ApplicationManager.Properties" class="form-control" />
-                <span asp-validation-for="ApplicationManager.Properties" class="text-danger"></span>
+                <label asp-for="Client.Properties" class="control-label"></label>
+                <input asp-for="Client.Properties" class="form-control" />
+                <span asp-validation-for="Client.Properties" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ApplicationManager.RedirectUris" class="control-label"></label>
-                <input asp-for="ApplicationManager.RedirectUris" class="form-control" />
-                <span asp-validation-for="ApplicationManager.RedirectUris" class="text-danger"></span>
+                <label asp-for="Client.RedirectUris" class="control-label"></label>
+                <input asp-for="Client.RedirectUris" class="form-control" placeholder="Enter Valid URL seperated with Comma(,)"  required/>
+                <span asp-validation-for="Client.RedirectUris" class="text-danger"></span>
             </div>
            
             <div class="form-group">

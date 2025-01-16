@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.EntityFrameworkCore.Models;
+using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
-using OppeniddictServer.Openiddict;
 
 namespace OppeniddictServer.Pages.Application
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = Roles.SuperAdmin)]
     public class EditModel : PageModel
     {
-        private readonly OppeniddictServer.Context.OpenIddictDbContext _context;
+        private readonly OpenIddictDbContext _context;
 
-        public EditModel(OppeniddictServer.Context.OpenIddictDbContext context)
+        public EditModel(OpenIddictDbContext context)
         {
             _context = context;
         }
@@ -42,8 +37,6 @@ namespace OppeniddictServer.Pages.Application
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -59,7 +52,7 @@ namespace OppeniddictServer.Pages.Application
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ApplicationManagerExists(ApplicationManager.Id))
+                if (!ApplicationManagerExists(ApplicationManager.Id!))
                 {
                     return NotFound();
                 }
@@ -69,7 +62,7 @@ namespace OppeniddictServer.Pages.Application
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage(Urls.Index);
         }
 
         private bool ApplicationManagerExists(string id)

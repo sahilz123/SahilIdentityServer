@@ -13,9 +13,9 @@ namespace OppeniddictServer.Pages.Tokens
 {
     public class DetailsModel : PageModel
     {
-        private readonly OppeniddictServer.Context.OpenIddictDbContext _context;
+        private readonly OpenIddictDbContext _context;
 
-        public DetailsModel(OppeniddictServer.Context.OpenIddictDbContext context)
+        public DetailsModel(OpenIddictDbContext context)
         {
             _context = context;
         }

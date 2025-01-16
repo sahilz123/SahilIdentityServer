@@ -13,7 +13,7 @@ namespace OppeniddictServer.Context
         { }
 
         // public DbSet<ClientData> ClientDbSet { get; set; }
-        //public DbSet<ApplicationManager>? ApplicationManager { get; set; }
+        //public DbSet<Client>? Client { get; set; }
         public DbSet<OpenIddictEntityFrameworkCoreApplication>? ApplicationManager { get; set; }
         public DbSet<OpenIddictEntityFrameworkCoreAuthorization>? Authorizations { get; set; }
 
@@ -29,7 +29,7 @@ namespace OppeniddictServer.Context
             modelBuilder.Entity<OpenIddictEntityFrameworkCoreApplication>()
                   .HasDiscriminator<string>("Discriminator")
                   .HasValue<OpenIddictEntityFrameworkCoreApplication>("OpenIddictEntityFrameworkCoreApplication")
-                  .HasValue<ApplicationManager>("ApplicationManager");
+                  .HasValue<ApplicationManager>("Client");
 
             modelBuilder.Entity<OpenIddictEntityFrameworkCoreScope>()
                  .HasDiscriminator<string>("Discriminator")                                            
