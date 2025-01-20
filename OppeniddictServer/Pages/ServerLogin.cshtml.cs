@@ -9,7 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Authorization;
 using OppeniddictServer.Constants;
-using Microsoft.VisualBasic;
 
 namespace OppeniddictServer.Pages
 {
@@ -72,18 +71,7 @@ namespace OppeniddictServer.Pages
                 .Select(param => param.Split('='))
                 .FirstOrDefault(keyValue => keyValue[0] == "client_id")?[1];
 
-                //foreach (var param in queryParams)
-                //{
-                //    var keyValue = param.Split('=');
-
-                //    if (keyValue[0] == "client_id")
-                //    {
-                //        Client_Id = keyValue[1];
-                //        break;
-                //    }
-
-                //}
-
+                
                 var clientExist = await _seeder.CheckClient(Client_Id!);        //must check that Client must exist before going ahead
                 if (clientExist == null)
                 {

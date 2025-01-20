@@ -12,9 +12,9 @@ namespace OppeniddictServer.Pages.RoleClaim
 {
     public class DetailsModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
 
-        public DetailsModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+        public DetailsModel(AdminIdentityDbContext context)
         {
             _context = context;
         }

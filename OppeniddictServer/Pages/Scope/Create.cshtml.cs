@@ -3,18 +3,22 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using OppeniddictServer.ClientManager;
 using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
+using OppeniddictServer.Openiddict;
 
 namespace OppeniddictServer.Pages.Scope
 {
     public class CreateModel : PageModel
     {
-        private readonly OpenIddictDbContext _context;
-        private readonly ClientSeeder _seeder;
+        //private readonly OpenIddictDbContext _context;
+        private readonly ScopesManager  _scopemanager;
+        private readonly AuthService _authService;
 
-        public CreateModel(OpenIddictDbContext context,  ClientSeeder seeder)
+
+        public CreateModel(ScopesManager scopemanager , AuthService authService)
         {
-            _context = context;
-            _seeder = seeder;
+            //_context = context;
+            _scopemanager = scopemanager;
+            _authService = authService;
         }
 
         public IActionResult OnGet()
@@ -29,13 +33,14 @@ namespace OppeniddictServer.Pages.Scope
 
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.ScopesManager == null || ScopesManager == null)
+          if (!ModelState.IsValid || ScopesManager == null)
             {
                 return Page();
             }
-            ScopesManager.PopulateResourcesList();
 
-            Status = await _seeder.AddScopes(ScopesManager) ;
+            ScopesManager.Resources = _authService.PopulateStringToList(ScopesManager.Resources![0], ScopesManager.Resources);
+            Status = await _scopemanager.CreateAsync(ScopesManager) ;
+            //Status = await _seeder.AddScopes(ScopesManager) ;
    
             return RedirectToPage(Urls.Index);
         }
@@ -46,24 +51,9 @@ namespace OppeniddictServer.Pages.Scope
             public string DisplayName { get; set; } = string.Empty;
             public string? Description { get; set; }
             public string? Properties { get; set; }
-            public string? Resources { get; set; }
+            public List<string>? Resources { get; set; }
 
-            public List<string> ResourcesList { get; set; } = new List<string>();
-
-            public void PopulateResourcesList()
-            {
-                if (!string.IsNullOrEmpty(Resources))
-                {
-                    ResourcesList = Resources
-                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(item => item.Trim())
-                        .ToList();
-                }
-                else
-                {
-                    ResourcesList.Clear(); 
-                }
-            }
+            
         }
 
     }

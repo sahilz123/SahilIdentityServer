@@ -11,7 +11,7 @@ namespace OppeniddictServer
         public static List<string> GetDestination(Claim claim)
         {
             var destination = new List<string>();
-            if (claim.Type == Claims.Name || claim.Type == Claims.Email || claim.Type == Claims.Role)
+            if (claim.Type == Claims.Name || claim.Type == Claims.Email || claim.Type == Claims.Role )                                                          //||claim.Type== "ADMIN_Write")
             {
                 destination.Add(Destinations.AccessToken);
             }

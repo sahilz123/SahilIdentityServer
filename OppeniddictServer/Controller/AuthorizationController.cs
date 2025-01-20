@@ -21,6 +21,7 @@ namespace OppeniddictServer.Controller
         private readonly IOpenIddictApplicationManager _applicationManager;
         private readonly IOpenIddictAuthorizationManager _authorizationManager;
         private readonly IOpenIddictScopeManager _scopeManager;
+        public readonly RoleManager<UserIdentityRole> _roleManager;
         private readonly AuthService _authService;
 
         private readonly UserManager<UserIdentity> _userManager;
@@ -31,7 +32,9 @@ namespace OppeniddictServer.Controller
             IOpenIddictAuthorizationManager authorizationManager,
             IOpenIddictScopeManager scopeManager, 
             AuthService authService,
-            UserManager<UserIdentity> userManager)
+            UserManager<UserIdentity> userManager,
+            RoleManager<UserIdentityRole> roleManager
+            )
 
         {
             _applicationManager = applicationManager;
@@ -40,6 +43,7 @@ namespace OppeniddictServer.Controller
             _authService = authService;
 
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         ///// <summary>
@@ -65,7 +69,7 @@ namespace OppeniddictServer.Controller
         [HttpPost("~/connect/authorize")]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Authorize()
-        
+            
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException(Error.OpenIdException);
@@ -90,7 +94,7 @@ namespace OppeniddictServer.Controller
             var application = await _applicationManager.FindByClientIdAsync(request.ClientId!) ??
                 throw new InvalidOperationException(Error.ClientNotFound);
 
-            var consentclaim = result.Principal!.GetClaim(Constants.Constant.ConsentNaming);
+            var consentclaim = result.Principal!.GetClaim(Constant.ConsentNaming);
 
             if (consentclaim != Constant.GrantAccessValue)
             {
@@ -106,11 +110,32 @@ namespace OppeniddictServer.Controller
             var claims = await _userManager.GetClaimsAsync(user);
 
 
-            var roles = result.Principal.FindAll(ClaimTypes.Role)       //have roleclaims binded within it
+
+            var roles = result.Principal.FindAll(ClaimTypes.Role)
                                         .Select(r => r.Value)
-                                        .ToImmutableArray();               
-                     
-           
+                                        .ToImmutableArray();
+            IList<Claim> roleclaims = new List<Claim>();
+
+            foreach (var role in roles)
+            {
+                var roleObject = await _roleManager.FindByNameAsync(role);
+                if (roleObject == null)
+                {
+                    continue; 
+                }
+
+                var rClaim = await _roleManager.GetClaimsAsync(roleObject);
+                if (rClaim != null && rClaim.Any())
+                {
+                    foreach (var c in rClaim)
+                    {
+                        roleclaims.Add(c); 
+                    }
+                }
+            }
+
+
+
             string _subject = result.Principal.FindFirst(ClaimTypes.Email)!.Value;
             var identity = new ClaimsIdentity(
             authenticationType: TokenValidationParameters.DefaultAuthenticationType,
@@ -126,6 +151,11 @@ namespace OppeniddictServer.Controller
             foreach(var c in claims)
             {
                 identity.SetClaim(c.Type,c.Value);
+            }
+            
+            foreach(var c in roleclaims)
+            {
+                identity.SetClaim(c.Type,c.Value); 
             }
             
 

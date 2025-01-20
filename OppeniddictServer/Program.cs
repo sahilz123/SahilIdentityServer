@@ -10,8 +10,6 @@ using OppeniddictServer.Identity;
 using OppeniddictServer.Openiddict;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
-KeyManagementService keyManagementService = new();
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -28,7 +26,7 @@ builder.Services.AddDbContext<AdminIdentityDbContext>(options =>
 
 builder.Services.AddDbContext<OpenIddictDbContext>(options =>
 {
-    options.UseOpenIddict();
+options.UseOpenIddict();
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
@@ -53,8 +51,6 @@ builder.Services.AddIdentity<UserIdentity, UserIdentityRole>(options =>
        .AddEntityFrameworkStores<AdminIdentityDbContext>()
        .AddDefaultTokenProviders()
        .AddSignInManager();
-
-//builder.Services.AddDefaultIdentity<UserIdentity>(o=>o);
 
 // Configure OpenIddict
 builder.Services.AddOpenIddict()
@@ -89,19 +85,16 @@ builder.Services.AddOpenIddict()
                .EnableAuthorizationEndpointPassthrough()               
                .EnableTokenEndpointPassthrough();
 
-        //options.DisableAccessTokenEncryption();
+        options.DisableAccessTokenEncryption();
     })
-    .AddValidation(options =>
-    {
-        options.UseLocalServer();
-        options.UseAspNetCore();
-    });
+    ;
 
 
 // Configure cookie authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(c =>
                 {
+                    c.AccessDeniedPath = "/Error";
                     c.LoginPath = "/ServerLogin";
                 });
 
@@ -110,7 +103,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.Name = ".AspNetCore.Identity.Application";
     options.LoginPath = "/ServerLogin"; // Redirect path for login
     options.SlidingExpiration = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.AccessDeniedPath = "/Error"; 
 });
 
@@ -138,16 +131,6 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var seeder = scope.ServiceProvider.GetRequiredService<ClientSeeder>();
-    //var keyManager = scope.ServiceProvider.GetRequiredService<KeyManagementService>();
-
-    //keyManager.GetClientEncryptionKey();
-    //seeder.AddClients().GetAwaiter().GetResult();
-    //seeder.AddScopes().GetAwaiter().GetResult();
-}
 
 if (!app.Environment.IsDevelopment())
 {

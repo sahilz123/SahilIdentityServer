@@ -18,7 +18,7 @@ namespace OppeniddictServer.ClientManager
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<string> AddScopes(ScopeInputModel scopeInput = null!)
+       /* public async Task<string> AddScopes(ScopeInputModel scopeInput = null!)
         {
             await using var scope = _serviceProvider.CreateAsyncScope();
            // var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
@@ -38,9 +38,9 @@ namespace OppeniddictServer.ClientManager
                 Name = scopeInput.Name,
             };
 
-            if (scopeInput.ResourcesList?.Count > 0)
+            if (scopeInput.Resources?.Count > 0)
             {
-                foreach (var resource in scopeInput.ResourcesList)
+                foreach (var resource in scopeInput.Resources)
                 {
                     scopeDescriptor.Resources.Add(resource);
                 }
@@ -50,7 +50,7 @@ namespace OppeniddictServer.ClientManager
 
             return $"Scope Created {scopeInput.Name}";
            
-        }
+        }*/
 
         public async Task<string> AddClients(RegisterInput newClient)
         {
@@ -112,11 +112,16 @@ namespace OppeniddictServer.ClientManager
                     }
                 };
 
-                foreach (var uri in newClient.RedirectUris!.Where(uri => !string.IsNullOrWhiteSpace(uri)))
-                {
-                    descriptor.RedirectUris.Add(new Uri(uri.Trim()));
+                try
+                { foreach (var uri in newClient.RedirectUris!.Where(uri => !string.IsNullOrWhiteSpace(uri)))
+                    {
+                        descriptor.RedirectUris.Add(new Uri(uri.Trim()));
+                    }
                 }
-
+                catch
+                {
+                    return Error.StatusFailed;
+                }
 
                 await manager.CreateAsync(descriptor);
 

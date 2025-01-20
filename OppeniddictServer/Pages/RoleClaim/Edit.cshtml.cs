@@ -24,14 +24,14 @@ namespace OppeniddictServer.Pages.RoleClaim
         [BindProperty]
         public UserIdentityRoleClaim UserIdentityRoleClaim { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(string? id)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null || _context.RoleClaims == null)
             {
                 return NotFound();
             }
 
-            var useridentityroleclaim =  await _context.RoleClaims.FirstOrDefaultAsync(m => m.RoleId == id);
+            var useridentityroleclaim =  await _context.RoleClaims.FirstOrDefaultAsync(m => m.Id == id);
             if (useridentityroleclaim == null)
             {
                 return NotFound();
