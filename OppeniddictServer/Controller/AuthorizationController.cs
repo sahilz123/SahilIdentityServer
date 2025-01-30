@@ -21,7 +21,7 @@ namespace OppeniddictServer.Controller
         private readonly IOpenIddictApplicationManager _applicationManager;
         private readonly IOpenIddictAuthorizationManager _authorizationManager;
         private readonly IOpenIddictScopeManager _scopeManager;
-        public readonly RoleManager<UserIdentityRole> _roleManager;
+        private readonly RoleManager<UserIdentityRole> _roleManager;
         private readonly AuthService _authService;
 
         private readonly UserManager<UserIdentity> _userManager;
@@ -81,7 +81,7 @@ namespace OppeniddictServer.Controller
 
 
             var parameters = _authService.ParseOAuthParameters(HttpContext);
-            if (!isAuthenticated)
+            if (isAuthenticated is false)
             {
                 return Challenge(
                     authenticationSchemes: CookieAuthenticationDefaults.AuthenticationScheme,
@@ -90,7 +90,7 @@ namespace OppeniddictServer.Controller
                        RedirectUri = _authService.BuilderRediect(HttpContext.Request,parameters)
                    });
             }
-
+            
             var application = await _applicationManager.FindByClientIdAsync(request.ClientId!) ??
                 throw new InvalidOperationException(Error.ClientNotFound);
 
@@ -220,26 +220,12 @@ namespace OppeniddictServer.Controller
                             [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
                             [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = Error.TokenInvalid
                         }));
-                }         
+                }
 
             var identity = new ClaimsIdentity(  result.Principal.Claims,
                                                 authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                                                 nameType: Claims.Name,
-                                                roleType: Claims.Role);
-
-            // Override the user claims present in the principal in case they
-            // changed since the authorization code/refresh token was issued.
-            //identity.SetClaim(Claims.Subject, email)
-            //        .SetClaim(Claims.Email, email)
-            //        .SetClaim(Claims.Name, email)
-            //        ;
-
-            //foreach (var c in claims)
-            //{
-            //    identity.SetClaim(c.Type, c.Value);
-            //}
-
-
+                                                roleType: Claims.Role);           
 
             identity.SetDestinations(AuthService.GetDestination);
 

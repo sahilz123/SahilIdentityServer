@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using OppeniddictServer.Identity;
 using OppeniddictServer.Openiddict;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.OAuth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +53,25 @@ builder.Services.AddIdentity<UserIdentity, UserIdentityRole>(options =>
        .AddEntityFrameworkStores<AdminIdentityDbContext>()
        .AddDefaultTokenProviders()
        .AddSignInManager();
+
+//Configure Google Auth
+builder.Services.AddAuthentication()
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
+    options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+
+    options.Events = new OAuthEvents
+    {
+        OnRemoteFailure = context =>
+        {
+            context.Response.Redirect("/Error?message=" + context.Failure.Message);
+            context.HandleResponse();
+            return Task.CompletedTask;
+        }
+    };
+});
+
 
 // Configure OpenIddict
 builder.Services.AddOpenIddict()

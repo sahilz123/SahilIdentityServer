@@ -103,7 +103,7 @@
 
                 <!-- Divider -->
                 <hr class="sidebar-divider">
-                            
+
                 <!-- Heading Roles -->
                 <div class="sidebar-heading">
                     Roles
@@ -137,7 +137,7 @@
                 <!-- Nav Item - Application Collapse Menu -->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseScopes"
-                       aria-expanded="true" aria-controls="collapseScopes">
+                    aria-expanded="true" aria-controls="collapseScopes">
                         <i class="fas fa-fw fa-cog"></i>
                         <span>Manage Scopes</span>
                     </a>
@@ -161,7 +161,7 @@
                 <!-- Nav Item - Application Collapse Menu -->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTokens"
-                       aria-expanded="true" aria-controls="collapseTokens">
+                    aria-expanded="true" aria-controls="collapseTokens">
                         <i class="fas fa-fw fa-cog"></i>
                         <span>View Tokens</span>
                     </a>
@@ -169,36 +169,36 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">Tokens/Code:</h6>
                             <a class="collapse-item" href="~/Tokens/Index">View All Tokens/Code</a>
-                           
+
                         </div>
                     </div>
                 </li>
 
                 <!-- Divider -->
                 <hr class="sidebar-divider">
-            }
-         
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Addons
-            </div>
 
-             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                   aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                       
+
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Addons
+                </div>
+
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                    aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-fw fa-folder"></i>
+                        <span>Pages</span>
+                    </a>
+                    <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+
                             <h6 class="collapse-header">Login Screens:</h6>
-                        @if (!User.Identity!.IsAuthenticated)
-                        {
-                            <a class="collapse-item" href="~/ServerLogin">Login</a>
-                        }
+                            @if (!User.Identity!.IsAuthenticated)
+                            {
+                                <a class="collapse-item" href="~/ServerLogin">Login</a>
+                            }
                             <a class="collapse-item" href="~/ServerRegister">Register</a>
                         
                     </div>
@@ -208,6 +208,7 @@
            
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
+            }
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">

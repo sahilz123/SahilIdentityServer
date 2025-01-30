@@ -33,7 +33,6 @@ namespace OppeniddictServer.Pages
         public string? Email { get; set; }
 
         [BindProperty]
-        [DataType(DataType.Password)]
         public string? Password { get; set; }
 
         [BindProperty]

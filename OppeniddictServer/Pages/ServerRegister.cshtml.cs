@@ -43,7 +43,6 @@ namespace OppeniddictServer.Pages
 
         public async Task<IActionResult> OnPost()
         {
-            var parameters = HttpContext.Request.QueryString;
 
             if (Password != ConfirmPassword)
             {
@@ -71,6 +70,8 @@ namespace OppeniddictServer.Pages
 
                 if (result.Succeeded)
                 {
+                    var parameters = HttpContext.Request.QueryString;
+
                     await _userManager.AddToRoleAsync(user, Roles.User);  //assigning default user role
 
                     return Redirect(Urls.ServerLogin + parameters);

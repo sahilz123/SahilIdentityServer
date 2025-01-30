@@ -2231,7 +2231,8 @@
     attrs.forEach(function (_ref) {
       var _ref2 = _slicedToArray(_ref, 2),
           attr = _ref2[0],
-          key = _ref2[1];
+          key = _ref2
+          ;
 
       var val = coerce(getAttrConfig(attr));
 

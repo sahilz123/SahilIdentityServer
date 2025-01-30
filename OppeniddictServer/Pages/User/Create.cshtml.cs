@@ -37,7 +37,6 @@ namespace OppeniddictServer.Pages.User
 
             foreach (var roles in rolesAvailable)
             {
-                //AvailableRoles.Add(roles);
                 AvailableRolesNames.Add(roles.Name);
 
                 var claims = await _roleManager.GetClaimsAsync(roles);
