@@ -15,9 +15,6 @@ using OppeniddictServer.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Primitives;
 using System.Data;
-using static System.Net.Mime.MediaTypeNames;
-using System.Security.Principal;
-using System.Net;
 namespace OppeniddictServer.Controller
 {
     [ApiController]
@@ -51,30 +48,18 @@ namespace OppeniddictServer.Controller
             _roleManager = roleManager;
         }
 
-        ///// <summary>
-        ///// Entry point into the login workflow
-        ///// </summary>
-        //[HttpGet("Login")]
-        //[AllowAnonymous]
-        //public async Task<IActionResult> Login(string returnUrl)
-        //{
-        //    // build a model so we know what to show on the login page
-        //    var vm = await BuildLoginViewModelAsync(returnUrl);
-
-        //    //if (vm.EnableLocalLogin == false && vm.ExternalProviders.Count() == 1)
-        //    //{
-        //    //    // only one option for logging in
-        //    //    return ExternalLogin(vm.ExternalProviders.First().AuthenticationScheme, returnUrl);
-        //    //}
-
-        //    return View(vm);
-        //}
+        /// <summary>
+        /// Check whether a request is valid or not
+        /// Check whether user have consent 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
 
         [HttpGet("~/connect/authorize")]
         [HttpPost("~/connect/authorize")]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Authorize()
-
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException(Error.OpenIdException);
@@ -101,7 +86,12 @@ namespace OppeniddictServer.Controller
 
                 string clientId = await _applicationManager.GetIdAsync(application) ?? throw new NullReferenceException();
 
-                CheckConsentClaim(result, parameters);
+                var returnurl=CheckConsentClaim(result, parameters);
+                
+                if(returnurl!=null)
+                {
+                    return returnurl;
+                }
 
                 var email = result.Principal!.FindFirst(ClaimTypes.Email)!.Value;
 
@@ -252,7 +242,8 @@ namespace OppeniddictServer.Controller
             return authorization;
         }
 
-        private ClaimsIdentity SetIdentity(string subject, string email,
+        static ClaimsIdentity SetIdentity(string subject, 
+                                            string email,
                                             ImmutableArray<string> roles,
                                             string userName,
                                             IList<Claim> claims,
@@ -311,6 +302,13 @@ namespace OppeniddictServer.Controller
             return roleclaims.ToList();
         }
 
+        /// <summary>
+        /// Check whether a user have consent 
+        /// Redirect to Consent page
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         private RedirectResult CheckConsentClaim(AuthenticateResult result, IDictionary<string, StringValues> parameters)
         {
 
@@ -324,6 +322,11 @@ namespace OppeniddictServer.Controller
             return null!;
         }
 
+        /// <summary>
+        /// Provide Tokens based on AuthCode to authenticated user
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         [HttpPost("~/connect/token")]
         [AllowAnonymous]
         public async Task<IActionResult> Exchange()
@@ -358,7 +361,7 @@ namespace OppeniddictServer.Controller
                     }));
             }
 
-            var identity = new ClaimsIdentity(result.Principal.Claims,
+            var identity = new ClaimsIdentity(result.Principal!.Claims,
                                                 authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                                                 nameType: Claims.Name,
                                                 roleType: Claims.Role);

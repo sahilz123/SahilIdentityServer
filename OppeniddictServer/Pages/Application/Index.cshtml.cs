@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using OpenIddict.EntityFrameworkCore.Models;
 using Microsoft.AspNetCore.Authorization;
 using OppeniddictServer.Constants;
+using NuGet.Protocol;
+using OpenIddict.Abstractions;
 
 namespace OppeniddictServer.Pages.Application
 {
@@ -21,7 +23,7 @@ namespace OppeniddictServer.Pages.Application
         public IList<OpenIddictEntityFrameworkCoreApplication> ApplicationManager { get;set; } = default!;
 
         public async Task OnGetAsync()
-        {            
+        {
             if (_context.ApplicationManager != null)
             {
                 ApplicationManager = await _context.ApplicationManager.ToListAsync();

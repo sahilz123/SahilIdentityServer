@@ -38,7 +38,7 @@ namespace OppeniddictServer.Pages.Scope
                 return Page();
             }
 
-            ScopesManager.Resources = _authService.PopulateStringToList(ScopesManager.Resources![0], ScopesManager.Resources);
+            ScopesManager.Resources = _authService.PopulateStringToList(ScopesManager.Resources![0]);
             Status = await _scopemanager.CreateAsync(ScopesManager) ;
             //Status = await _seeder.AddScopes(ScopesManager) ;
    

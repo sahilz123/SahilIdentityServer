@@ -84,27 +84,10 @@ namespace OppeniddictServer.ClientManager
                     ClientId = newClient.ClientId.ToString(),
                     ConsentType = ConsentTypes.Explicit,
                     DisplayName = newClient.DisplayName,
-                   
+
                     Permissions =
                     {
-                        Permissions.Endpoints.Authorization,
-                        Permissions.Endpoints.Logout,
-                        Permissions.Endpoints.Token,
-
-                        Permissions.GrantTypes.RefreshToken,
-                        Permissions.GrantTypes.ClientCredentials,
-                        Permissions.GrantTypes.AuthorizationCode,
-
-                        Permissions.ResponseTypes.Code,
-
-                        Permissions.Scopes.Email,
-                        Permissions.Scopes.Profile,
-                        Permissions.Scopes.Roles,
-                        Scopes.OfflineAccess,
-                        Scopes.OpenId,
-
-
-                        $"{Permissions.Prefixes.Scope}{scopestring}"
+                     $"{Permissions.Prefixes.Scope}{scopestring}"
                     },
                     Requirements =
                     {
@@ -113,10 +96,18 @@ namespace OppeniddictServer.ClientManager
                 };
 
                 try
-                { foreach (var uri in newClient.RedirectUris!.Where(uri => !string.IsNullOrWhiteSpace(uri)))
+                { 
+                    foreach (var uri in newClient.RedirectUris!.Where(uri => !string.IsNullOrWhiteSpace(uri)))
                     {
                         descriptor.RedirectUris.Add(new Uri(uri.Trim()));
                     }
+
+                    foreach (var permission in newClient.Permissions!.Where(p => !string.IsNullOrWhiteSpace(p)))
+                    {
+                        descriptor.Permissions.Add(permission);
+                    }
+
+
                 }
                 catch
                 {

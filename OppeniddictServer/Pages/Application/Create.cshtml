@@ -52,11 +52,31 @@
                 <span asp-validation-for="Client.DisplayName" class="text-danger"></span>
             </div>
            
-            <div class="form-group">
+           @*  <div class="form-group">
                 <label asp-for="Client.Permissions" class="control-label"></label>
                 <input asp-for="Client.Permissions" class="form-control" />
                 <span asp-validation-for="Client.Permissions" class="text-danger"></span>
+            </div> *@
+
+            <div class="form-group">
+                <label>Select Project Permission</label>
+                <select asp-for="SelectedPermission"  class="form-control" multiple required>
+                    @foreach (var group in Model.Permission.GroupBy(p => p.Group?.Name))
+        {
+                    <optgroup label="@group.Key" @(group.First().Group?.Disabled == true ? "disabled" : "")>
+
+                    @foreach (var s in group)
+                    {
+                        <option value="@s.Value" selected="@(Model.SelectedPermission.Contains(s.Value!) ? "selected" : null)">
+                            @s.Text
+                        </option>
+                    }
+                    </optgroup>
+        }
+                </select>
+                <span asp-validation-for="SelectedScopes" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Client.PostLogoutRedirectUris" class="control-label"></label>
                 <input asp-for="Client.PostLogoutRedirectUris" placeholder="Enter Valid URL seperated with Comma(,)"  class="form-control" />

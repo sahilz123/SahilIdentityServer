@@ -12,6 +12,9 @@ using OppeniddictServer.Constants;
 
 namespace OppeniddictServer.Pages
 {
+    /// <summary>
+    /// Entry point into the login workflow
+    /// </summary>
     [AllowAnonymous]
     public class ServerLoginModel : PageModel
     {

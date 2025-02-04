@@ -56,8 +56,9 @@ namespace OppeniddictServer
             
         }
 
-        public List<string> PopulateStringToList(string res, List<string> ResourcesList)
+        public List<string> PopulateStringToList(string res)
         {
+            List<string> ResourcesList = new();
             if (!string.IsNullOrEmpty(res))
             {
                 ResourcesList.Clear();
@@ -65,6 +66,9 @@ namespace OppeniddictServer
                     .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(item => item.Trim())
                     .ToList();
+                ResourcesList.RemoveAll(x => x == "");
+                ResourcesList = ResourcesList.Distinct().ToList();
+
             }
             else
             {

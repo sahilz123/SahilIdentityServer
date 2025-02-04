@@ -171,5 +171,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapRazorPages();
+app.UseMiddleware<ExceptionFilter>();
 
 app.Run();
