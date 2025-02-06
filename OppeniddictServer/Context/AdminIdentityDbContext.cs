@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Constants;
 using OppeniddictServer.Identity;
-using OppeniddictServers.Identity;
 using OppeniddictServer.Openiddict;
 using OpenIddict.Core;
 using OpenIddict.EntityFrameworkCore.Models;

@@ -23,7 +23,6 @@ namespace OppeniddictServer.Pages.User
 
         public async Task OnGetAsync()
         {
-            //throw new NotImplementedException();    
             if (_context.Users != null)
             {
                 UserIdentity = await _context.Users.ToListAsync();

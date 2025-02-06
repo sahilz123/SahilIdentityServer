@@ -3,6 +3,7 @@ using OpenIddict.Core;
 using OpenIddict.EntityFrameworkCore.Models;
 using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
+using OppeniddictServer.Model;
 using OppeniddictServer.Pages.Application;
 using System.Text;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -13,6 +14,8 @@ namespace OppeniddictServer.ClientManager
     public class ClientSeeder
     {
         private readonly IServiceProvider _serviceProvider;
+        private OpenIddictApplicationDescriptor descriptor;
+
         public ClientSeeder(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -52,7 +55,7 @@ namespace OppeniddictServer.ClientManager
            
         }*/
 
-        public async Task<string> AddClients(RegisterInput newClient)
+        public async Task<string> AddClients(ApplicationRegisterData newClient)
         {
             StringBuilder scopestring =new("");
 
@@ -60,13 +63,12 @@ namespace OppeniddictServer.ClientManager
             {
                 scopestring.Append(x+" ");
             }
-            await using var scope = _serviceProvider.CreateAsyncScope();            
+            await using var scope = _serviceProvider.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<OpenIddictDbContext>();
 
             await context.Database.EnsureCreatedAsync();
 
             var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
-
 
             var client = await manager.FindByClientIdAsync(newClient.ClientId!.ToString()!);
 
@@ -77,12 +79,16 @@ namespace OppeniddictServer.ClientManager
             }
             else
             {
-                var descriptor = new OpenIddictApplicationDescriptor
+                try
+                { 
+                
+                descriptor = new ()
                 {
 
                     ClientSecret = Guid.NewGuid().ToString(),
                     ClientId = newClient.ClientId.ToString(),
-                    ConsentType = ConsentTypes.Explicit,
+                    ConsentType = newClient.ConsentType,
+                    ClientType=newClient.ClientType,
                     DisplayName = newClient.DisplayName,
 
                     Permissions =
@@ -95,8 +101,7 @@ namespace OppeniddictServer.ClientManager
                     }
                 };
 
-                try
-                { 
+               
                     foreach (var uri in newClient.RedirectUris!.Where(uri => !string.IsNullOrWhiteSpace(uri)))
                     {
                         descriptor.RedirectUris.Add(new Uri(uri.Trim()));

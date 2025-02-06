@@ -14,9 +14,9 @@ namespace OppeniddictServer.Pages.Role
 {
     public class EditModel : PageModel
     {
-        private readonly OppeniddictServer.Context.AdminIdentityDbContext _context;
+        private readonly AdminIdentityDbContext _context;
 
-        public EditModel(OppeniddictServer.Context.AdminIdentityDbContext context)
+        public EditModel(AdminIdentityDbContext context)
         {
             _context = context;
         }

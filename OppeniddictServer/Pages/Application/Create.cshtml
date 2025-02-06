@@ -16,15 +16,15 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label>Scope Of the Project</label>
-                <select asp-for="SelectedScopes" class="form-control" multiple required>
+                <select asp-for="Client.Scopes" class="form-control" multiple required>
                     @foreach (var s in Model.AvailableScopes)
                     {
-                        <option value="@s.Name" selected="@(Model.SelectedScopes.Contains(s.Name!) ? "selected" : null)">
+                        <option value="@s.Name" selected="@(Model.Client.Scopes.Contains(s.Name!) ? "selected" : null)">
                             @s.Name
                         </option>
                     }
                 </select>
-                <span asp-validation-for="SelectedScopes" class="text-danger"></span>
+                <span asp-validation-for="Client.Scopes" class="text-danger"></span>
             </div>
             <div>
                 <a asp-page="/Scope/Create">Create Your Own Scopes/Resources</a>
@@ -36,6 +36,20 @@
             </div>
            
             <div class="form-group">
+                <label>Client Type</label>
+                <select asp-for="Client.ClientType" class="form-control" asp-items="Model.ClientType" required>
+                </select>
+                <span asp-validation-for="Client.ClientType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Consent Type</label>
+                <select asp-for="Client.ConsentType" class="form-control" asp-items="Model.ConsentType" required>
+                </select>
+                <span asp-validation-for="Client.ConsentType" class="text-danger"></span>
+            </div>
+
+            @* <div class="form-group">
                 <label asp-for="Client.ClientType" class="control-label"></label>
                 <input asp-for="Client.ClientType" class="form-control" required/>
                 <span asp-validation-for="Client.ClientType" class="text-danger"></span>
@@ -45,7 +59,7 @@
                 <label asp-for="Client.ConsentType" class="control-label"></label>
                 <input asp-for="Client.ConsentType" class="form-control" required/>
                 <span asp-validation-for="Client.ConsentType" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="Client.DisplayName" class="control-label"></label>
                 <input asp-for="Client.DisplayName" class="form-control" required/>
@@ -56,25 +70,25 @@
                 <label asp-for="Client.Permissions" class="control-label"></label>
                 <input asp-for="Client.Permissions" class="form-control" />
                 <span asp-validation-for="Client.Permissions" class="text-danger"></span>
-            </div> *@
+            </div> *@                                                                                     02/feb/2025
 
             <div class="form-group">
-                <label>Select Project Permission</label>
-                <select asp-for="SelectedPermission"  class="form-control" multiple required>
+                <label>Select Client Permissions</label>
+                <select asp-for="Client.Permissions" class="form-control" multiple required>
                     @foreach (var group in Model.Permission.GroupBy(p => p.Group?.Name))
         {
                     <optgroup label="@group.Key" @(group.First().Group?.Disabled == true ? "disabled" : "")>
 
                     @foreach (var s in group)
                     {
-                        <option value="@s.Value" selected="@(Model.SelectedPermission.Contains(s.Value!) ? "selected" : null)">
+                                <option value="@s.Value" selected="@(Model.Client.Permissions!.Contains(s.Value!) ? "selected" : null)">
                             @s.Text
                         </option>
                     }
                     </optgroup>
         }
                 </select>
-                <span asp-validation-for="SelectedScopes" class="text-danger"></span>
+                <span asp-validation-for="Client.Permissions" class="text-danger"></span>
             </div>
 
             <div class="form-group">
