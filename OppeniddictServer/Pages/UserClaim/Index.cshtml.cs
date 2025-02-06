@@ -8,19 +8,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
-using OppeniddictServers.Identity;
 
 namespace OppeniddictServer.Pages.UserClaim
 {
     public class IndexModel : PageModel
     {
         private readonly AdminIdentityDbContext _context;
-        private readonly UserManager<UserIdentity> _userManager;
+        //private readonly UserManager<UserIdentity> _userManager;
 
-        public IndexModel(AdminIdentityDbContext context, UserManager<UserIdentity> userManager)
+        public IndexModel(AdminIdentityDbContext context)//, UserManager<UserIdentity> userManager)
         {
             _context = context;
-            _userManager = userManager;
+            //_userManager = userManager;
         }
 
         public IList<UserIdentityUserClaim> UserIdentityUserClaim { get;set; } = default!;

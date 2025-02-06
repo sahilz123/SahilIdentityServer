@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace OppeniddictServers.Identity
+namespace OppeniddictServer.Identity
 {
     public class UserIdentityUserClaim : IdentityUserClaim<string>
     {

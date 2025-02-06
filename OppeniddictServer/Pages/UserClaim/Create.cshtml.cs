@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
-using OppeniddictServers.Identity;
 
 namespace OppeniddictServer.Pages.UserClaim
 {

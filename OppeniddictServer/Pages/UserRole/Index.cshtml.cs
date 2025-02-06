@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Context;
 using OppeniddictServer.Identity;
+using OppeniddictServer.Model;
 
 namespace OppeniddictServer.Pages.UserRole
 {
@@ -56,12 +57,6 @@ namespace OppeniddictServer.Pages.UserRole
             }
         }
 
-        public class UserRoleViewModel
-        {
-            public string? Id { get; set; }
-            public string? Email { get; set; }
-            public string? UserName { get; set; }
-            public string? RoleName { get; set; }
-        }
+        
     }
 }

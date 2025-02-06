@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OppeniddictServer.Constants;
 using OppeniddictServer.Context;
-using OppeniddictServers.Identity;
+using OppeniddictServer.Identity;
 
 namespace OppeniddictServer.Pages.UserClaim
 {

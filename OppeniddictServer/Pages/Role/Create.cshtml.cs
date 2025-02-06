@@ -12,7 +12,7 @@ using OppeniddictServer.Identity;
 
 namespace OppeniddictServer.Pages.Role
 {
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
     public class CreateModel : PageModel
     {
         private readonly AdminIdentityDbContext _context;
