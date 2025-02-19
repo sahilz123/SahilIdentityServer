@@ -54,9 +54,7 @@ namespace OppeniddictServer.Pages.User
         
         [BindProperty]
         public List<string> AssignedRoles { get; set; } =new List<string>();
-        
-        [BindProperty]
-        public List<string> AssignedRolesWithSearch { get; set; } =new List<string>();
+       
         
         [BindProperty]
         public List<string> SelectedClaims { get; set; } =new List<string>();       //all claims provided by the user
@@ -68,15 +66,12 @@ namespace OppeniddictServer.Pages.User
 
                 return Page();
             }
-
-            UserIdentity.Id = Guid.NewGuid().ToString();
-
             
             var user = await _userManager.FindByNameAsync(UserIdentity.UserName)
                                 ?? await _userManager.FindByEmailAsync(UserIdentity.Email);
             if (user != null) return Page();
 
-            var Password=UserIdentity.UserName.ToUpper() + UserIdentity.Email;          //return to the user so that they can
+            var Password=UserIdentity.UserName.ToUpper() + UserIdentity.Email+1;          //return to the user so that they can
                                                                                         //logged in with the given password
 
             var claims = new List<Claim>();
@@ -90,8 +85,8 @@ namespace OppeniddictServer.Pages.User
 
             if (result.Succeeded)
             {
-               var r= await _userManager.AddClaimsAsync(UserIdentity,claims);
-                var existingClaims = await _userManager.GetClaimsAsync(UserIdentity);
+                await _userManager.AddClaimsAsync(UserIdentity,claims);
+                //var existingClaims = await _userManager.GetClaimsAsync(UserIdentity);
 
 
                 foreach (var role in AssignedRoles) { await _userManager.AddToRoleAsync(UserIdentity, role); }

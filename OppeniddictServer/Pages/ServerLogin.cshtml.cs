@@ -135,8 +135,8 @@ namespace OppeniddictServer.Pages
                 return Page();
             }
 
-            var response =await _signInManager.PasswordSignInAsync(user,Password,RememberMe,false);
-            if (!response.Succeeded)              
+            var response = await _signInManager.PasswordSignInAsync(user, Password, RememberMe, false);
+            if (!response.Succeeded)
             {
                 Status = Error.InvalidCredential;
                 return Page();

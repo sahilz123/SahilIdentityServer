@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using OppeniddictServer.Identity;
+using OppeniddictServer.Pages.Scope;
 using System.Diagnostics;
 
 namespace OppeniddictServer.Pages
@@ -14,9 +17,13 @@ namespace OppeniddictServer.Pages
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
         private readonly ILogger<ErrorModel> _logger;
+        private readonly SignInManager<UserIdentity> _signInManager;
 
-        public ErrorModel(ILogger<ErrorModel> logger)
+
+        public ErrorModel(ILogger<ErrorModel> logger, SignInManager<UserIdentity> signInManager)
         {
+            _signInManager = signInManager;
+        
             _logger = logger;
         }
 
@@ -24,6 +31,7 @@ namespace OppeniddictServer.Pages
         {
             var from = HttpContext;
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            _signInManager.SignOutAsync();   
         }
     }
 

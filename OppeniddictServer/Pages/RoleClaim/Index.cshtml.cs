@@ -20,12 +20,14 @@ namespace OppeniddictServer.Pages.RoleClaim
         }
 
         public IList<UserIdentityRoleClaim> UserIdentityRoleClaim { get;set; } = default!;
+        public IList<UserIdentityRole> UserRoles { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
             if (_context.RoleClaims != null)
             {
                 UserIdentityRoleClaim = await _context.RoleClaims.ToListAsync();
+                UserRoles = await _context.Roles.ToListAsync();
             }
         }
     }

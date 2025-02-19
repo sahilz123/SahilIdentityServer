@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OpenIddict.Abstractions;
 using OppeniddictServer.Constants;
+using OppeniddictServer.Identity;
 using System.Web;
 
 namespace OppeniddictServer.Pages
@@ -13,6 +14,11 @@ namespace OppeniddictServer.Pages
     [Authorize]
     public class ConsentModel : PageModel
     {
+        private readonly SignInManager<UserIdentity> _signInManager;
+        public ConsentModel( SignInManager<UserIdentity> signInManager)
+        {
+            _signInManager = signInManager;
+        }
         [BindProperty]
         public string? ReturnUrl { get; set; }
         public IActionResult OnGet(string returnUrl)
@@ -26,6 +32,7 @@ namespace OppeniddictServer.Pages
         {
             if (grant != Constant.GrantAccessValue)
             {
+                await _signInManager.SignOutAsync(); // Log them out
                 return Redirect(Urls.Error);
             }
 

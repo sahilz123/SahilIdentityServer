@@ -43,10 +43,20 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../Index">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
+                @if (Context.Request.Path== "/ServerLogin")
+                {
+                    <a class="nav-link disable-link">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                }
+                else
+                {
+                    <a class="nav-link" href="../Index">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                }
             </li>
 
             <!-- Divider -->

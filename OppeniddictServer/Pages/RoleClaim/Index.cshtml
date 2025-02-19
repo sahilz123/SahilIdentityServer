@@ -5,7 +5,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Role Claim Index</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
@@ -15,6 +15,10 @@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.UserIdentityRoleClaim[0].RoleId)
+            </th>
+            <th>
+                Role
+
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.UserIdentityRoleClaim[0].ClaimType)
@@ -27,11 +31,16 @@
     </thead>
     <tbody>
 @foreach (var item in Model.UserIdentityRoleClaim) {
+
+            var roleName = Model.UserRoles.FirstOrDefault(r => r.Id == item.RoleId)?.Name ?? "Unknown";
+
         <tr>
             
             <td>
                 @Html.DisplayFor(modelItem => item.RoleId)
             </td>
+            <td>
+                    @roleName
             <td>
                 @Html.DisplayFor(modelItem => item.ClaimType)
             </td>

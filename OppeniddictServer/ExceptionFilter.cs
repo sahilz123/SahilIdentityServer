@@ -1,15 +1,20 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Identity;
+using OppeniddictServer.Identity;
+using System.Net;
 namespace OppeniddictServer
 {
     public class ExceptionFilter 
     {
        private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionFilter> _logger;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public ExceptionFilter( RequestDelegate next, ILogger<ExceptionFilter> logger)
+
+        public ExceptionFilter( RequestDelegate next, ILogger<ExceptionFilter> logger, IServiceScopeFactory scopeFactory)
         {
             _next = next;
             _logger = logger;
+            _scopeFactory = scopeFactory;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -20,7 +25,16 @@ namespace OppeniddictServer
             }
             catch(Exception ex)
             {
-                await HandleExceptionAsync(context, ex);
+                if (context.User.Identity?.IsAuthenticated == true)
+                {
+                    using (var scope = _scopeFactory.CreateScope())
+                    {
+                        var signInManager = scope.ServiceProvider.GetRequiredService<SignInManager<UserIdentity>>();
+                        await signInManager.SignOutAsync();
+                        _logger.LogInformation("User has been logged out due to an exception.");
+                    }
+                }
+                    await HandleExceptionAsync(context, ex);
             }
         }
 

@@ -75,8 +75,7 @@
             <!-- User ID (Readonly) -->
             <div class="form-group">
                 <label asp-for="UserIdentity.Id" class="control-label">User ID</label>
-                <input value="@Guid.NewGuid()" class="form-control" readonly />
-
+                <input asp-for="UserIdentity.Id" class="form-control" value="@Guid.NewGuid()" required type="text" readonly />
             </div>
 
             <div class="form-group">
@@ -101,7 +100,7 @@
                 <input asp-for="UserIdentity.PhoneNumber" class="form-control"  type="number" maxlength=10 />
                 <span asp-validation-for="UserIdentity.PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
+            @* <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="UserIdentity.PhoneNumberConfirmed" /> @Html.DisplayNameFor(model => model.UserIdentity.PhoneNumberConfirmed)
                 </label>
@@ -125,10 +124,10 @@
                 <label asp-for="UserIdentity.AccessFailedCount" class="control-label"></label>
                 <input asp-for="UserIdentity.AccessFailedCount" class="form-control"  type="number" value=0 required />
                 <span asp-validation-for="UserIdentity.AccessFailedCount" class="text-danger"></span>
-            </div>
+            </div> 
 
             <!-- Roles Selection -->
-            @* <div class="form-group">
+             <div class="form-group">
                 <label>Assign Roles</label>
                 <select asp-for="AssignedRoles" class="form-control" multiple id="AssignedRoles">
                     @foreach (var role in Model.AvailableRoles)
@@ -155,7 +154,7 @@
                
                 <div class="form-group">
                     <label class="control-label">Add Custom Claim</label>
-                    <input id="customClaimInput"
+                    <input  id="customClaimInput"
                            class="form-control"
                            type="text"
                            placeholder="Enter custom claim"

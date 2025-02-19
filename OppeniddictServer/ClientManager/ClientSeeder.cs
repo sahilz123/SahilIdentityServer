@@ -14,7 +14,7 @@ namespace OppeniddictServer.ClientManager
     public class ClientSeeder
     {
         private readonly IServiceProvider _serviceProvider;
-        private OpenIddictApplicationDescriptor descriptor;
+        private  OpenIddictApplicationDescriptor descriptor;
 
         public ClientSeeder(IServiceProvider serviceProvider)
         {
@@ -63,14 +63,15 @@ namespace OppeniddictServer.ClientManager
             {
                 scopestring.Append(x+" ");
             }
-            await using var scope = _serviceProvider.CreateAsyncScope();
-            var context = scope.ServiceProvider.GetRequiredService<OpenIddictDbContext>();
+            //await using var scope = _serviceProvider.CreateAsyncScope();
+            //var context = scope.ServiceProvider.GetRequiredService<OpenIddictDbContext>();
 
-            await context.Database.EnsureCreatedAsync();
+            //await context.Database.EnsureCreatedAsync();
 
-            var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+            //var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-            var client = await manager.FindByClientIdAsync(newClient.ClientId!.ToString()!);
+            //var client = await manager.FindByClientIdAsync(newClient.ClientId!.ToString()!);
+            var client = CheckClient(newClient.ClientId!.ToString());
 
             if (client != null)
             {
@@ -119,13 +120,16 @@ namespace OppeniddictServer.ClientManager
                     return Error.StatusFailed;
                 }
 
-                await manager.CreateAsync(descriptor);
+                await using var scope = _serviceProvider.CreateAsyncScope();                 
+                await scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>()
+                    .CreateAsync(descriptor);
+
 
                 return $"Client Created {newClient.ClientId}";
             }
         }
 
-        public async Task<object?> CheckClient(string clientid="user")
+        public async Task<object?> CheckClient(string clientid)
         {
             await using var scope = _serviceProvider.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<OpenIddictDbContext>();
